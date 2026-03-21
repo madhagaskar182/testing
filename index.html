@@ -3,38 +3,164 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Akses Slip Gaji Pegawai</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Akses PDF - Input Nama File</title>
   <style>
-    body { background: linear-gradient(135deg, #0f172a, #1e293b); color: white; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: linear-gradient(to bottom, #e0f2fe, #bae6fd);
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem 2.5rem;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    h1 {
+      text-align: center;
+      color: #1e40af;
+      margin-bottom: 1.8rem;
+    }
+    label {
+      display: block;
+      margin: 1rem 0 0.4rem;
+      font-weight: 500;
+      color: #334155;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #94a3b8;
+      border-radius: 6px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+    }
+    button {
+      width: 100%;
+      margin-top: 1.8rem;
+      padding: 0.9rem;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1.1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #1d4ed8;
+    }
+    #result {
+      margin-top: 1.5rem;
+      text-align: center;
+      font-weight: 500;
+    }
+    #pdfViewer {
+      width: 100%;
+      height: 70vh;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      margin-top: 1rem;
+      display: none;
+    }
+    .error {
+      color: #dc2626;
+      margin-top: 0.8rem;
+    }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center px-4">
-  <div class="w-full max-w-md bg-gray-900 p-8 rounded-2xl shadow-2xl border border-gray-700">
-    <h1 class="text-3xl font-bold text-center mb-2">Akses Slip Gaji</h1>
-    <p class="text-gray-400 text-center mb-8">Masukkan data pegawai</p>
+<body>
 
-    <form id="form" class="space-y-5">
-      <input type="text" id="nomor" placeholder="Nomor Pegawai (contoh: 001234)" required class="w-full px-5 py-3 bg-gray-800 border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" />
+<div class="card">
+  <h1>Akses Dokumen PDF</h1>
 
-      <select id="bulan" required class="w-full px-5 py-3 bg-gray-800 border border-gray-700 rounded-xl">
-        <option value="" disabled selected>Pilih Bulan</option>
-        <option value="01">Januari</option><option value="02">Februari</option><option value="03">Maret</option>
-        <option value="04">April</option><option value="05">Mei</option><option value="06">Juni</option>
-        <option value="07">Juli</option><option value="08">Agustus</option><option value="09">September</option>
-        <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
-      </select>
+  <form id="pdfForm">
+    <label for="tahun">Tahun:</label>
+    <select id="tahun" required>
+      <option value="">Pilih tahun...</option>
+      <option value="2026">2026</option>
+      <option value="2027">2027</option>
+      <option value="2028">2028</option>
+      <!-- tambahkan tahun lain sesuai kebutuhan -->
+    </select>
 
-      <input type="number" id="tahun" placeholder="Tahun (contoh: 2026)" min="2020" max="2030" required class="w-full px-5 py-3 bg-gray-800 border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    <label for="bulan">Bulan:</label>
+    <select id="bulan" required>
+      <option value="">Pilih bulan...</option>
+      <option value="01_Januari">Januari</option>
+      <option value="02_Februari">Februari</option>
+      <option value="03_Maret">Maret</option>
+      <option value="04_April">April</option>
+      <option value="05_Mei">Mei</option>
+      <option value="06_Juni">Juni</option>
+      <option value="07_Juli">Juli</option>
+      <option value="08_Agustus">Agustus</option>
+      <option value="09_September">September</option>
+      <option value="10_Oktober">Oktober</option>
+      <option value="11_November">November</option>
+      <option value="12_Desember">Desember</option>
+    </select>
 
-      <button type="submit" class="w-full py-4 bg-blue-600 hover:bg-blue-700 rounded-xl text-lg font-semibold transition">
-        Buka File
-      </button>
-    </form>
+    <label for="nama">Nama file (tanpa .pdf):</label>
+    <input type="text" id="nama" placeholder="Contoh: 199601292022031004" required />
 
-    <div id="status" class="mt-6 text-center text-sm min-h-[1.5rem]"></div>
-  </div>
+    <button type="submit">Tampilkan PDF</button>
+  </form>
 
-  <script src="script.js"></script>
+  <div id="result"></div>
+  <iframe id="pdfViewer" title="PDF Viewer"></iframe>
+</div>
+
+<script>
+  const form = document.getElementById('pdfForm');
+  const resultDiv = document.getElementById('result');
+  const viewer = document.getElementById('pdfViewer');
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const tahun = document.getElementById('tahun').value;
+    const bulan = document.getElementById('bulan').value;
+    const nama = document.getElementById('nama').value.trim();
+
+    if (!tahun || !bulan || !nama) {
+      resultDiv.innerHTML = '<span class="error">Lengkapi semua field!</span>';
+      viewer.style.display = 'none';
+      return;
+    }
+
+    // Bangun path raw GitHub
+    const base = 'https://raw.githubusercontent.com/madhagaskar182/testing/main/files/';
+    const path = `${tahun}/${bulan}/${nama}.pdf`;
+    const url = base + path;
+
+    resultDiv.innerHTML = `Memuat: <strong>${nama}.pdf</strong> (${bulan} ${tahun})...`;
+
+    viewer.src = url;
+    viewer.style.display = 'block';
+
+    // Fallback jika gagal dimuat setelah beberapa detik
+    setTimeout(() => {
+      if (!viewer.contentDocument || viewer.contentDocument.body.innerHTML.includes('404')) {
+        resultDiv.innerHTML = `<span class="error">File tidak ditemukan atau repository tidak publik.<br>URL yang dicoba:<br><small>${url}</small></span>`;
+      }
+    }, 5000);
+  });
+</script>
+
 </body>
 </html>
