@@ -1,0 +1,17 @@
+.logo {
+  display: block;
+  margin: 0 auto 10px auto;
+  width: 80px;       /* bisa diubah sesuai kebutuhan */
+  height: auto;
+}
+
+#viewerContainer {
+  margin-top: 20px;
+  display: none;
+  max-height: 70vh;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 10px;
+  background: #f8fafc;
+}
