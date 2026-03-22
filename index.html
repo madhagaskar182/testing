@@ -82,15 +82,13 @@
   <form id="formCari">
     <div class="form-group">
       <label for="nip">Nomor Pegawai / NIP</label>
-      <input type="text" id="nip" placeholder="Contoh: 10234 atau 19920312001" required/>
+      <input type="text" id="nip" placeholder="Contoh: 19920312001" required/>
     </div>
 
     <div class="form-group">
       <label for="tahun">Tahun</label>
       <select id="tahun" required>
         <option value="">Pilih Tahun</option>
-        <option value="2023">2023</option>
-        <option value="2024">2024</option>
         <option value="2025">2025</option>
         <option value="2026" selected>2026</option>
         <option value="2027">2027</option>
@@ -139,7 +137,7 @@
     // Contoh: slips/2025/03/10234.pdf
     const fileName = `${nip}.pdf`;                   // ← hanya nomor pegawai
     const pdfPath = `files/${tahun}/${bulan}/${fileName}`;
-
+files/2026/01/199601292022031004.pdf
     // Jika pakai pdf.js viewer (direkomendasikan agar tampilan lebih bagus & konsisten)
     const viewerUrl = `pdfjs/web/viewer.html?file=${encodeURIComponent(pdfPath)}`;
     
