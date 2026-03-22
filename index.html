@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>RRI TAHUNA</title>
+  <title>Slip Gaji Pegawai</title>
 
   <!-- PDF.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -23,32 +23,38 @@
       border-radius: 16px;
       padding: 2rem;
       width: 100%;
-      max-width: 650px;
+      max-width: 500px;
       box-shadow: 0 15px 35px rgba(0,0,0,0.12);
       text-align: center;
     }
 
-    h1 {
-      color: #1e40af;
+    .logo {
+      width: 120px;
+      margin-bottom: 10px;
     }
 
-    label {
-      display: block;
-      margin-top: 1rem;
+    h1 {
+      color: #1e40af;
+      margin-bottom: 1rem;
+    }
+
+    form {
       text-align: left;
     }
 
-    input, select {
+    select, input {
       width: 100%;
       padding: 0.8rem;
-      margin-top: 0.4rem;
+      margin-top: 8px;
+      margin-bottom: 12px;
       border-radius: 8px;
       border: 1px solid #94a3b8;
+      font-size: 14px;
+      box-sizing: border-box;
     }
 
     button {
       width: 100%;
-      margin-top: 1.2rem;
       padding: 0.9rem;
       background: #2563eb;
       color: white;
@@ -67,20 +73,22 @@
       width: 100%;
       border: 1px solid #ccc;
       margin-top: 10px;
-    }
-
-    .controls {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
+      border-radius: 8px;
     }
 
     .download-btn {
       background: #16a34a;
+      margin-top: 10px;
     }
 
     .error {
       color: red;
+      margin-top: 10px;
+    }
+
+    #pesan {
+      margin-top: 10px;
+      color: #1e40af;
     }
   </style>
 </head>
@@ -88,24 +96,24 @@
 
 <div class="card">
   
-  <img src="images/TAHUNA__1_-removebg-preview.png" alt="Logo" class="logo">
+  <img src="images/logo.png" alt="Logo" class="logo">
 
   <h1>Slip Gaji Pegawai</h1>
 
   <form id="pdfForm">
     <select id="tahun" required>
-      <option value="">Tahun</option>
+      <option value="">Pilih Tahun</option>
       <option value="2026">2026</option>
       <option value="2027">2027</option>
     </select>
 
     <select id="bulan" required>
-      <option value="">Bulan</option>
+      <option value="">Pilih Bulan</option>
       <option value="01">Januari</option>
       <option value="02">Februari</option>
     </select>
 
-    <input type="text" id="nama" placeholder="Nama file" required />
+    <input type="text" id="nama" placeholder="Nama file (tanpa .pdf)" required />
 
     <button type="submit">Tampilkan PDF</button>
   </form>
@@ -115,19 +123,10 @@
 
   <div id="viewerContainer">
     <canvas id="pdfCanvas"></canvas>
-
-    <div class="controls">
-  <button id="prev">Prev</button>
-  <button id="next">Next</button>
-</div>
-
     <button id="downloadBtn" class="download-btn">Download PDF</button>
-
-    <div id="pageInfo"></div>
   </div>
 </div>
 
-<!-- Script eksternal -->
 <script src="script.js"></script>
 
 </body>
