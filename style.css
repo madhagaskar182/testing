@@ -18,8 +18,11 @@ body {
 }
 
 .logo {
-  width: 100px;
-  margin-bottom: 10px;
+  display: block;
+  margin: 0 auto 15px auto; /* tengah horizontal */
+  width: 110px;             /* ukuran sedang */
+  max-width: 100%;
+  height: auto;
 }
 
 h1 {
