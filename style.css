@@ -12,7 +12,7 @@ body {
   border-radius: 16px;
   padding: 2rem;
   width: 100%;
-  max-width: 480px;
+  max-width: 750px;
   box-shadow: 0 15px 35px rgba(0,0,0,0.12);
   text-align: center;
 }
@@ -20,12 +20,12 @@ body {
 .logo {
   display: block;
   margin: 0 auto 15px auto; /* tengah horizontal */
-  width: 400px;             /* ukuran sedang */
+  width: 480px;             /* ukuran sedang */
   max-width: 100%;
   height: auto;
 }
 
-h1 {
+.h1 {
   font-weight: 700;        /* bold */
   font-size: 24px;         /* ukuran ideal */
   color: #1e40af;
