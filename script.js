@@ -1,10 +1,9 @@
 const form = document.getElementById('pdfForm');
-const viewer = document.getElementById('viewerContainer');
 const pesan = document.getElementById('pesan');
 const errorDiv = document.getElementById('error');
-const downloadBtn = document.getElementById('downloadBtn');
-
-let currentUrl = '';
+const viewerContainer = document.getElementById('viewerContainer');
+const canvas = document.getElementById('pdfCanvas');
+const ctx = canvas.getContext('2d');
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -20,8 +19,7 @@ form.addEventListener('submit', async function(e) {
 
   errorDiv.textContent = '';
   pesan.textContent = '';
-  viewer.innerHTML = ''; // bersihkan canvas lama
-  viewer.style.display = 'none';
+  viewerContainer.style.display = 'none';
 
   if (!tahun || !bulan || !nama) {
     errorDiv.textContent = 'Harap isi semua kolom!';
@@ -29,54 +27,41 @@ form.addEventListener('submit', async function(e) {
   }
 
   const baseUrl = 'https://raw.githubusercontent.com/madhagaskar182/testing/main/files/';
-  const url = `${baseUrl}${tahun}/${bulan}/${nama}.pdf`;
+  const filePath = `${tahun}/${bulan}/${nama}.pdf`;
+  const fullUrl = baseUrl + filePath;
 
-  pesan.textContent = 'Memuat semua halaman PDF...';
+  pesan.textContent = 'Memuat PDF...';
 
   try {
-    const check = await fetch(url, { method: 'HEAD' });
-    if (!check.ok) throw new Error('File tidak ditemukan');
-
-    currentUrl = url;
-
-    const pdf = await pdfjsLib.getDocument(url).promise;
-
-    // LOOP SEMUA HALAMAN
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-
-      const viewport = page.getViewport({ scale: 1.4 });
-
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-
-      canvas.height = viewport.height;
-      canvas.width = viewport.width;
-
-      viewer.appendChild(canvas);
-
-      await page.render({
-        canvasContext: ctx,
-        viewport: viewport
-      }).promise;
+    // cek file dulu
+    const response = await fetch(fullUrl, { method: 'HEAD' });
+    if (!response.ok) {
+      throw new Error('File tidak ditemukan');
     }
 
-    viewer.style.display = 'block';
-    pesan.textContent = 'Semua halaman berhasil ditampilkan';
+    // load PDF
+    const loadingTask = pdfjsLib.getDocument(fullUrl);
+    const pdf = await loadingTask.promise;
+
+    // ambil halaman pertama
+    const page = await pdf.getPage(1);
+
+    const viewport = page.getViewport({ scale: 1.5 });
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+
+    const renderContext = {
+      canvasContext: ctx,
+      viewport: viewport
+    };
+
+    await page.render(renderContext).promise;
+
+    viewerContainer.style.display = 'block';
+    pesan.textContent = 'PDF berhasil ditampilkan';
 
   } catch (err) {
-    errorDiv.textContent = err.message;
+    errorDiv.textContent = err.message || 'Gagal memuat PDF';
+    pesan.textContent = '';
   }
 });
-
-// DOWNLOAD
-downloadBtn.onclick = () => {
-  if (!currentUrl) return;
-
-  const link = document.createElement('a');
-  link.href = currentUrl;
-  link.download = '';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
