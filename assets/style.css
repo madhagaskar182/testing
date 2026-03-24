@@ -13,6 +13,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 15px;
 }
 
 /* CARD */
@@ -21,64 +22,77 @@ body {
   padding: 30px;
   border-radius: 18px;
   width: 100%;
-  max-width: 750px;
+  max-width: 900px;
   box-shadow: 0 20px 40px rgba(0,0,0,0.25);
   text-align: center;
 }
 
 /* LOGO */
 .logo {
-  width: 250px;
-  margin-bottom: 10px;
+  width: 220px;
+  margin-bottom: 15px;
 }
 
 /* TITLE */
 h1 {
-  font-size: 28px;
+  font-size: 26px;
   margin-bottom: 20px;
   color: #1e3a8a;
 }
 
-/* FORM */
+/* FORM (JARAK OTOMATIS RAPI) */
 form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
   text-align: left;
+}
+
+/* FORM GROUP */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 /* LABEL */
 label {
   font-size: 14px;
   font-weight: 600;
-  margin-top: 10px;
-  display: block;
 }
 
-/* SELECT */
+/* INPUT & SELECT */
+input,
 select {
-  font-size: 14px;
-  font-weight: 600;
-  margin-top: 10px;
-  display: block;
-}
-
-/* INPUT */
-input {
   width: 100%;
-  padding: 10px;
-  margin-top: 5px;
+  padding: 11px;
   border-radius: 10px;
   border: 1px solid #ccc;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+input:focus,
+select:focus {
+  border-color: #2563eb;
+  outline: none;
 }
 
 /* BUTTON */
 button {
   width: 100%;
-  margin-top: 15px;
   padding: 12px;
   border: none;
   border-radius: 12px;
   background: #2563eb;
   color: white;
   cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
 }
 
 /* ERROR */
@@ -93,28 +107,66 @@ button {
   font-size: 13px;
 }
 
-/* PDF */
+/* ================= VIEWER NYAMAN ================= */
+
+/* CONTAINER PDF */
 #viewerContainer {
   margin-top: 20px;
-  background: #f1f5f9;
-  padding: 10px;
+  background: #f8fafc;
+  padding: 15px;
+  border-radius: 14px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  max-height: 75vh;
+  overflow: hidden;
+
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+}
+
+/* AREA SCROLL */
+#pdfViewer {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+/* SCROLLBAR */
+#pdfViewer::-webkit-scrollbar {
+  width: 6px;
+}
+
+#pdfViewer::-webkit-scrollbar-thumb {
+  background: #94a3b8;
   border-radius: 10px;
 }
 
+/* CANVAS PDF */
 #pdfViewer canvas {
-  width: 100%;
-  max-height: 500px;
+  display: block;
+  margin: 0 auto 12px;
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  background: white;
+  box-shadow: 0 5px 12px rgba(0,0,0,0.15);
 }
 
-/* DOWNLOAD */
+/* DOWNLOAD BUTTON */
 .download-btn {
-  display: block;
-  margin-top: 10px;
+  text-align: center;
   padding: 10px;
-  background: green;
+  border-radius: 10px;
+  background: #16a34a;
   color: white;
   text-decoration: none;
-  border-radius: 8px;
+  transition: 0.2s;
+}
+
+.download-btn:hover {
+  opacity: 0.9;
 }
 
 /* HIDDEN */
@@ -122,8 +174,10 @@ button {
   display: none;
 }
 
-/* RESPONSIVE */
-@media (max-width: 600px) {
+/* ================= RESPONSIVE ================= */
+
+/* TABLET */
+@media (max-width: 900px) {
   .card {
     padding: 20px;
   }
@@ -131,8 +185,33 @@ button {
   h1 {
     font-size: 22px;
   }
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  body {
+    align-items: flex-start;
+  }
+
+  .card {
+    padding: 15px;
+    border-radius: 14px;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
 
   .logo {
-    width: 180px;
+    width: 160px;
+  }
+
+  #viewerContainer {
+    max-height: 65vh;
+    padding: 10px;
+  }
+
+  #pdfViewer canvas {
+    border-radius: 8px;
   }
 }
