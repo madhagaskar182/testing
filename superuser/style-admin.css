@@ -18,165 +18,89 @@ body {
 
 /* LOGIN BOX */
 .login-box {
-  background: white;
+  background: #fff;
   padding: 25px;
   border-radius: 16px;
   width: 100%;
   max-width: 400px;
   box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-}
 
-/* CONTAINER */
-.container {
-  background: white;
-  padding: 20px;
-  border-radius: 16px;
-  width: 100%;
-  max-width: 1000px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 18px; /* ⬅️ jarak otomatis rapi */
 }
 
 /* TITLE */
-h2 {
-  margin-bottom: 15px;
-  color: #1e3a8a;
+.login-box h2 {
   text-align: center;
+  color: #1e3a8a;
+}
+
+/* FORM */
+#loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px; /* ⬅️ jarak antar field */
+}
+
+/* LABEL */
+label {
+  font-size: 13px;
+  color: #444;
 }
 
 /* INPUT */
 input {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   border-radius: 10px;
   border: 1px solid #ccc;
   font-size: 14px;
+  transition: 0.2s;
+}
+
+input:focus {
+  border-color: #2563eb;
+  outline: none;
 }
 
 /* BUTTON */
 button {
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  color: white;
-  font-size: 14px;
-  min-height: 40px;
-}
-
-/* BUTTON COLORS */
-.btn-primary { background: #2563eb; }
-.btn-success { background: #16a34a; }
-.btn-danger { background: #dc2626; }
-.btn-copy { background: #f59e0b; }
-
-/* HOVER */
-button:hover {
-  opacity: 0.9;
-}
-
-/* ACTION BUTTONS */
-.top-actions {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 10px;
-  margin-bottom: 15px;
-  margin-upper: 15px;
-}
-
-/* TABLE WRAPPER */
-.table-wrapper {
   width: 100%;
-  overflow-x: auto;
-}
-
-/* TABLE */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 600px;
-}
-
-th, td {
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-  text-align: left;
-}
-
-/* OUTPUT */
-.output {
-  margin-top: 15px;
-  background: #0f172a;
-  color: #22c55e;
   padding: 12px;
   border-radius: 10px;
-  font-family: monospace;
-  font-size: 12px;
-  max-height: 250px;
-  overflow-y: auto;
+  border: none;
+  background: #2563eb;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
 }
 
 /* ERROR */
 .error-text {
   color: red;
-  margin-top: 10px;
+  font-size: 13px;
   text-align: center;
 }
 
-/* HIDDEN */
-.hidden {
-  display: none;
-}
-
-/* ================= MOBILE MODE ================= */
+/* MOBILE */
 @media (max-width: 600px) {
-
   body {
     align-items: flex-start;
   }
 
-  .container {
-    padding: 15px;
-  }
-
-  h2 {
-    font-size: 18px;
-  }
-
-  /* TABLE JADI CARD */
-  table, thead, tbody, th, td, tr {
-    display: block;
-  }
-
-  thead {
-    display: none;
-  }
-
-  tr {
-    background: #f8fafc;
-    margin-bottom: 12px;
-    padding: 10px;
+  .login-box {
+    padding: 20px;
     border-radius: 12px;
   }
 
-  td {
-    border: none;
-    margin-bottom: 8px;
-  }
-
-  td::before {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 3px;
-    color: #1e3a8a;
-  }
-
-  td:nth-child(1)::before { content: "NIP"; }
-  td:nth-child(2)::before { content: "Nama File"; }
-  td:nth-child(3)::before { content: "Password"; }
-  td:nth-child(4)::before { content: "Aksi"; }
-
-  /* BUTTON FULL */
-  button {
-    width: 100%;
+  .login-box h2 {
+    font-size: 18px;
   }
 }
