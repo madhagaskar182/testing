@@ -112,7 +112,15 @@ button {
 
 /* Footer Text */
 .footer-text
-font-size: 12px;
+    font-size: 12.5px;                      /* ukuran kecil */
+    text-align: center;                   /* rata tengah */
+    padding: 20px 0;                      /* jarak atas bawah */
+    margin-top: 30px;                     /* jarak dari konten di atas */
+    border-top: 1px solid rgba(200, 200, 200, 0.3);   /* garis tipis di atas (opsional) */
+    color: #888888;           /* abu sedang */
+    opacity: 0.7;             /* transparansi utama */
+    letter-spacing: 0.3px;    /* sedikit jarak antar huruf biar lebih rapi */
+}
 
 /* DOWNLOAD */
 .download-btn {
