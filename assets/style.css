@@ -131,7 +131,7 @@ font-size: 12px;
 }
 
 /* RESPONSIVE */
-@media (max-width: 600px) {
+@media (max-width: 550px) {
   .card {
     padding: 20px;
   }
