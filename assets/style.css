@@ -1,103 +1,145 @@
+/* RESET */
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
+/* BODY */
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to bottom, #e0f2fe, #bae6fd);
-  margin: 0;
-  padding: 20px;
-}
-
-.container {
-  max-width: 1100px;
-  margin: auto;
-  background: white;
-  padding: 25px;
-  border-radius: 16px;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.12);
-}
-
-h2 {
-  text-align: center;
-  color: #1e40af;
-}
-
-.login-box {
-  max-width: 400px;
-  margin: 80px auto;
-  background: white;
-  padding: 25px;
-  border-radius: 16px;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-}
-
-.hidden {
-  display: none;
-}
-
-input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #cbd5f5;
-  margin-bottom: 10px;
-}
-
-button {
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.btn-primary { background: #2563eb; color: white; }
-.btn-success { background: #16a34a; color: white; }
-.btn-copy { background: #9333ea; color: white; }
-.btn-danger { background: #dc2626; color: white; }
-
-.top-actions {
+  background: linear-gradient(135deg, #2563eb, #1e3a8a);
+  min-height: 100vh;
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+/* CARD */
+.card {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px;
+  border-radius: 18px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+  text-align: center;
+  animation: fadeIn 0.6s ease;
+}
+
+/* LOGO */
+.logo {
+  width: 90px;
   margin-bottom: 15px;
 }
 
-.table-wrapper {
-  overflow-x: auto;
+/* TITLE */
+h1 {
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: #1e3a8a;
 }
 
-table {
+/* FORM */
+form {
+  text-align: left;
+}
+
+/* LABEL */
+label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 12px;
+  display: block;
+  color: #334155;
+}
+
+/* INPUT & SELECT */
+input, select {
   width: 100%;
-  border-collapse: collapse;
-}
-
-thead {
-  background: #2563eb;
-  color: white;
-}
-
-th, td {
   padding: 10px;
-  text-align: center;
-}
-
-tbody tr:nth-child(even) {
-  background: #f8fafc;
-}
-
-tbody tr:hover {
-  background: #e0f2fe;
-}
-
-.output {
-  margin-top: 20px;
-  background: #0f172a;
-  color: #22c55e;
-  padding: 15px;
+  margin-top: 5px;
   border-radius: 10px;
-  max-height: 300px;
-  overflow: auto;
-  font-family: monospace;
+  border: 1px solid #cbd5f5;
+  outline: none;
+  transition: 0.3s;
+}
+
+/* FOCUS */
+input:focus, select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
+}
+
+/* BUTTON */
+button {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(37,99,235,0.3);
+}
+
+/* ERROR */
+.error {
+  margin-top: 10px;
+  color: #dc2626;
+  font-size: 13px;
+}
+
+/* PESAN */
+#pesan {
+  margin-top: 10px;
+  color: #16a34a;
+  font-size: 13px;
+}
+
+/* PDF VIEWER */
+#viewerContainer {
+  margin-top: 20px;
+}
+
+#pdfViewer canvas {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+/* DOWNLOAD BUTTON */
+.download-btn {
+  background: #16a34a;
+}
+
+.download-btn:hover {
+  background: #15803d;
+}
+
+/* FOOTER */
+.footer-text {
+  margin-top: 15px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* ANIMATION */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
