@@ -5,79 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Generator JSON</title>
 
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: linear-gradient(to bottom, #e0f2fe, #bae6fd);
-  padding: 20px;
-}
+<link rel="stylesheet" href="style-admin.css">
 
-.container {
-  max-width: 1000px;
-  margin: auto;
-  background: white;
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-}
-
-h2 {
-  text-align: center;
-  color: #1e40af;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
-}
-
-th, td {
-  padding: 8px;
-  border: 1px solid #ddd;
-}
-
-input {
-  width: 100%;
-  padding: 6px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-button {
-  margin-top: 10px;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  background: #2563eb;
-  color: white;
-  cursor: pointer;
-}
-
-button:hover {
-  opacity: 0.9;
-}
-
-.btn-danger {
-  background: red;
-}
-
-.output {
-  margin-top: 20px;
-  background: #f1f5f9;
-  padding: 10px;
-  border-radius: 8px;
-  max-height: 300px;
-  overflow: auto;
-  font-size: 13px;
-}
-
-.top-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-</style>
 </head>
 
 <body>
@@ -87,11 +16,12 @@ button:hover {
 <h2>🔐 Generator JSON Pegawai</h2>
 
 <div class="top-actions">
-  <button onclick="tambahBaris()">➕ Tambah Baris</button>
-  <button onclick="generateJSON()">🚀 Generate JSON</button>
-  <button onclick="copyJSON()">📋 Copy JSON</button>
+  <button class="btn-primary" onclick="tambahBaris()">➕ Tambah</button>
+  <button class="btn-success" onclick="generateJSON()">🚀 Generate</button>
+  <button class="btn-copy" onclick="copyJSON()">📋 Copy</button>
 </div>
 
+<div class="table-wrapper">
 <table id="table">
   <thead>
     <tr>
@@ -103,20 +33,21 @@ button:hover {
   </thead>
   <tbody>
     <tr>
-      <td><input type="text" placeholder="NIP 18 digit"></td>
-      <td><input type="text" placeholder="Nama File PDF"></td>
-      <td><input type="text" placeholder="Password"></td>
+      <td><input type="text"></td>
+      <td><input type="text"></td>
+      <td><input type="text"></td>
       <td><button class="btn-danger" onclick="hapusBaris(this)">❌</button></td>
     </tr>
   </tbody>
 </table>
+</div>
 
 <div class="output" id="output"></div>
 
 </div>
 
 <script>
-// ================= HASH =================
+// HASH
 async function hashPassword(password) {
   const data = new TextEncoder().encode(password);
   const hash = await crypto.subtle.digest('SHA-256', data);
@@ -124,27 +55,27 @@ async function hashPassword(password) {
     .map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-// ================= TAMBAH BARIS =================
+// TAMBAH
 function tambahBaris() {
-  const table = document.querySelector('#table tbody');
-  const row = document.createElement('tr');
+  const tbody = document.querySelector('#table tbody');
+  const tr = document.createElement('tr');
 
-  row.innerHTML = `
-    <td><input type="text" placeholder="NIP 18 digit"></td>
-    <td><input type="text" placeholder="Nama File PDF"></td>
-    <td><input type="text" placeholder="Password"></td>
+  tr.innerHTML = `
+    <td><input type="text"></td>
+    <td><input type="text"></td>
+    <td><input type="text"></td>
     <td><button class="btn-danger" onclick="hapusBaris(this)">❌</button></td>
   `;
 
-  table.appendChild(row);
+  tbody.appendChild(tr);
 }
 
-// ================= HAPUS =================
+// HAPUS
 function hapusBaris(btn) {
-  btn.parentElement.parentElement.remove();
+  btn.closest('tr').remove();
 }
 
-// ================= GENERATE JSON =================
+// GENERATE
 async function generateJSON() {
   const rows = document.querySelectorAll('#table tbody tr');
   const data = {};
@@ -175,11 +106,11 @@ async function generateJSON() {
     JSON.stringify(data, null, 2);
 }
 
-// ================= COPY =================
+// COPY
 function copyJSON() {
   const text = document.getElementById('output').textContent;
   navigator.clipboard.writeText(text);
-  alert('JSON berhasil disalin!');
+  alert('JSON disalin!');
 }
 </script>
 
