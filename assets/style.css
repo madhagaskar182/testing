@@ -52,6 +52,14 @@ label {
   display: block;
 }
 
+/* SELECT */
+select {
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 10px;
+  display: block;
+}
+
 /* INPUT */
 input {
   width: 100%;
