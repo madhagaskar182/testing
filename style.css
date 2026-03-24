@@ -107,3 +107,8 @@ label {
   margin-bottom: 4px;
   color: #334155;
 }
+
+.pdf-page {
+  min-height: 500px;
+  border-radius: 8px;
+}
