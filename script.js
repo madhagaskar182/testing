@@ -76,30 +76,37 @@ function setupLazyLoading() {
 form.addEventListener('submit', async function(e) {
   e.preventDefault();
 
+  if (!dataLoaded) {
+    errorDiv.textContent = 'Data masih dimuat, coba lagi...';
+    return;
+  }
+
   const tahun = document.getElementById('tahun').value;
   const bulan = document.getElementById('bulan').value;
-  const nip = document.getElementById('nip').value.trim();
+  const email = document.getElementById('email').value.trim().toLowerCase();
   const password = document.getElementById('password').value.trim();
 
   errorDiv.textContent = '';
-  pesan.textContent = '';
+  pesan.textContent = 'Loading...';
   viewer.innerHTML = '';
   viewerContainer.style.display = 'none';
 
-  if (!tahun || !bulan || !nip || !password) {
+  if (!tahun || !bulan || !email || !password) {
     errorDiv.textContent = 'Semua field wajib diisi!';
     return;
   }
 
-  if (!/^\d{18}$/.test(nip)) {
-    errorDiv.textContent = 'NIP harus 18 digit angka!';
+  // ✅ Validasi email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    errorDiv.textContent = 'Format email tidak valid!';
     return;
   }
 
-  const pegawai = dataPegawai[nip];
+  const pegawai = dataPegawai[email];
 
   if (!pegawai) {
-    errorDiv.textContent = 'NIP tidak ditemukan!';
+    errorDiv.textContent = 'Email tidak ditemukan!';
     return;
   }
 
@@ -121,21 +128,15 @@ form.addEventListener('submit', async function(e) {
 
     pdfDoc = await pdfjsLib.getDocument(url).promise;
 
-    for (let i = 1; i <= pdfDoc.numPages; i++) {
-      const canvas = document.createElement('canvas');
-      canvas.classList.add('pdf-page');
-      canvas.dataset.page = i;
-      viewer.appendChild(canvas);
-    }
-
-    setupLazyLoading();
+    await renderAllPages();
 
     viewerContainer.style.display = 'block';
     pesan.textContent = `SLIP GAJI ${namaFile} BERHASIL DIMUAT`;
 
   } catch (err) {
     console.error(err);
-    errorDiv.textContent = 'PDF tidak ditemukan!';
+    errorDiv.textContent = 'PDF tidak ditemukan / gagal dimuat!';
+    pesan.textContent = '';
   }
 });
 
