@@ -277,9 +277,11 @@ async function generateJSON(){
   const file = excelFile.files[0];
 
   if(!file){
-    alert("⚠️ Upload file Excel dulu!");
+    alert("⚠️ Pilih file Excel dulu!");
     return;
   }
+
+  console.log("FILE:", file.name, file.type);
 
   const reader = new FileReader();
 
@@ -287,15 +289,35 @@ async function generateJSON(){
     try{
 
       const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, { type: "array" });
 
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      // 🔥 READ EXCEL (MODE PALING AMAN)
+      const workbook = XLSX.read(data, {
+        type: "array",
+        cellDates: true,
+        cellText: false
+      });
 
-      // 🔥 AMBIL DATA RAW (lebih aman)
-      const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+      console.log("SheetNames:", workbook.SheetNames);
 
-      if(rows.length === 0){
-        alert("⚠️ File kosong / format salah!");
+      const sheetName = workbook.SheetNames[0];
+
+      if(!sheetName){
+        alert("❌ Sheet tidak ditemukan!");
+        return;
+      }
+
+      const sheet = workbook.Sheets[sheetName];
+
+      // 🔥 RAW DATA (LEBIH AMAN)
+      const rows = XLSX.utils.sheet_to_json(sheet, {
+        defval: "",
+        raw: false
+      });
+
+      console.log("ROWS:", rows);
+
+      if(!rows || rows.length === 0){
+        alert("⚠️ File terbaca tapi kosong / header salah!");
         return;
       }
 
@@ -303,17 +325,21 @@ async function generateJSON(){
 
       for(let row of rows){
 
-        // 🔥 NORMALISASI KEY (ANTI ERROR HEADER)
+        // 🔥 NORMALISASI HEADER (ANTI SPASI / CASE)
         const normalized = {};
         for(let key in row){
-          normalized[key.toLowerCase().replace(/\s/g,'')] = row[key];
+          const cleanKey = key.toLowerCase().replace(/\s/g,'');
+          normalized[cleanKey] = row[key];
         }
 
         const email = (normalized.email || "").toLowerCase().trim();
-        const nama = (normalized.namafile || "").toUpperCase().trim();
-        const pass = (normalized.password || "").toString().trim();
+        const nama  = (normalized.namafile || "").toUpperCase().trim();
+        const pass  = (normalized.password || "").toString().trim();
 
-        if(!email || !nama || !pass) continue;
+        if(!email || !nama || !pass){
+          console.warn("SKIP ROW:", row);
+          continue;
+        }
 
         result[email] = {
           namaFile: nama,
@@ -322,7 +348,7 @@ async function generateJSON(){
       }
 
       if(Object.keys(result).length === 0){
-        alert("⚠️ Data tidak terbaca!\nPastikan kolom: email, namaFile, password");
+        alert("❌ Data tidak terbaca!\n\nCek:\n- Nama kolom\n- Isi tidak kosong");
         return;
       }
 
@@ -332,9 +358,21 @@ async function generateJSON(){
       alert("✅ JSON berhasil dibuat!");
 
     }catch(err){
-      console.error(err);
-      alert("❌ Gagal membaca Excel!");
+      console.error("ERROR DETAIL:", err);
+
+      alert(
+        "❌ Gagal membaca Excel!\n\n" +
+        "Kemungkinan:\n" +
+        "1. File bukan .xlsx\n" +
+        "2. File rusak\n" +
+        "3. Format aneh (merge cell)\n\n" +
+        "Buka Console (F12) untuk detail"
+      );
     }
+  };
+
+  reader.onerror = function(){
+    alert("❌ FileReader gagal membaca file!");
   };
 
   reader.readAsArrayBuffer(file);
