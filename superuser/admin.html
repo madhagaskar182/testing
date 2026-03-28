@@ -572,7 +572,7 @@ function renderFiles(){
 function removeFile(i){files.splice(i,1);renderFiles();}
 
 // UPLOAD PDF
-async function uploadSingle(file,i,token){
+async function uploadSingle(file, i, token){
 
   const bar = document.getElementById("bar"+i);
 
@@ -580,7 +580,10 @@ async function uploadSingle(file,i,token){
 
   bar.style.width = "30%";
 
-  const path = `files/${tahun.value}/${bulan.value}/${file.name}`;
+  // Ubah nama file menjadi huruf kapital
+  const fileName = file.name.toUpperCase();
+
+  const path = `files/${tahun.value}/${bulan.value}/${fileName}`;
   const url = `https://api.github.com/repos/valios-idn/slip-gaji/contents/${path}`;
 
   bar.style.width = "60%";
@@ -596,6 +599,11 @@ async function uploadSingle(file,i,token){
       content:base64
     })
   });
+
+  if(!res.ok) throw new Error();
+
+  bar.style.width = "100%";
+}
 
   if(!res.ok) throw new Error();
 
