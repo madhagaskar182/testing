@@ -3,52 +3,145 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Excel ke JSON Pegawai</title>
+<title>Excel → JSON Generator</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <style>
+/* GLOBAL */
 body {
-  font-family: Arial;
+  font-family: 'Segoe UI', monospace;
+  background: #0f172a;
+  color: #e2e8f0;
+  margin: 0;
   padding: 20px;
-  background: #f1f5f9;
 }
 
-.card {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  max-width: 600px;
+/* CONTAINER */
+.container {
+  max-width: 800px;
   margin: auto;
 }
 
-input, button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
+/* CARD */
+.card {
+  background: #1e293b;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 0 40px rgba(0,0,0,0.6);
 }
 
+/* TITLE */
+h1 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-bottom: 20px;
+}
+
+/* INPUT */
+input[type="file"] {
+  width: 100%;
+  padding: 12px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #cbd5f5;
+  border-radius: 10px;
+}
+
+/* BUTTON */
+button {
+  margin-top: 10px;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 100%;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.btn-generate {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-generate:hover {
+  background: #2563eb;
+}
+
+.btn-download {
+  background: #10b981;
+  color: white;
+}
+
+.btn-download:hover {
+  background: #059669;
+}
+
+/* OUTPUT */
 textarea {
   width: 100%;
   height: 250px;
-  margin-top: 10px;
+  margin-top: 15px;
+  background: #020617;
+  color: #22c55e;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 15px;
   font-family: monospace;
+  font-size: 13px;
+}
+
+/* STATUS */
+.status {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #38bdf8;
+}
+
+/* BADGE */
+.badge {
+  display: inline-block;
+  padding: 5px 10px;
+  background: #22c55e;
+  color: black;
+  border-radius: 8px;
+  font-size: 12px;
+  margin-bottom: 10px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="card">
-  <h2>Upload Excel → JSON Pegawai</h2>
+<div class="container">
+  <div class="card">
+    
+    <div class="badge">⚡ JSON Generator Tool</div>
+    <h1>Excel → JSON Pegawai</h1>
+    <div class="subtitle">Upload Excel dan convert otomatis dengan hash SHA-256</div>
 
-  <input type="file" id="fileInput" accept=".xlsx, .xls">
-  <button onclick="prosesExcel()">Convert ke JSON</button>
+    <input type="file" id="fileInput" accept=".xlsx, .xls">
+    
+    <button class="btn-generate" onclick="prosesExcel()">Generate JSON</button>
+    <button class="btn-download" onclick="downloadJSON()">Download JSON</button>
 
-  <textarea id="output" placeholder="Hasil JSON muncul di sini..."></textarea>
+    <div class="status" id="status"></div>
+
+    <textarea id="output" placeholder="Output JSON akan muncul di sini..."></textarea>
+
+  </div>
 </div>
 
 <script>
+let generatedData = {};
+
+// HASH
 async function hashPassword(password) {
   const encoder = new TextEncoder();
   const data = encoder.encode(password);
@@ -57,12 +150,17 @@ async function hashPassword(password) {
     .map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
+// PROSES EXCEL
 async function prosesExcel() {
   const file = document.getElementById('fileInput').files[0];
+  const status = document.getElementById('status');
+
   if (!file) {
     alert("Pilih file Excel dulu!");
     return;
   }
+
+  status.textContent = "⏳ Memproses file...";
 
   const reader = new FileReader();
 
@@ -70,9 +168,7 @@ async function prosesExcel() {
     const data = new Uint8Array(e.target.result);
     const workbook = XLSX.read(data, { type: 'array' });
 
-    const sheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[sheetName];
-
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const jsonData = XLSX.utils.sheet_to_json(sheet);
 
     let result = {};
@@ -92,11 +188,33 @@ async function prosesExcel() {
       };
     }
 
+    generatedData = result;
+
     document.getElementById("output").value =
       JSON.stringify(result, null, 2);
+
+    status.textContent = "✅ Berhasil generate JSON (" + Object.keys(result).length + " data)";
   };
 
   reader.readAsArrayBuffer(file);
+}
+
+// DOWNLOAD JSON
+function downloadJSON() {
+  if (!generatedData || Object.keys(generatedData).length === 0) {
+    alert("Belum ada data!");
+    return;
+  }
+
+  const blob = new Blob(
+    [JSON.stringify(generatedData, null, 2)],
+    { type: "application/json" }
+  );
+
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "dataPegawai.json";
+  link.click();
 }
 </script>
 
