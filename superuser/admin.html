@@ -240,10 +240,17 @@ async function login(){
 
 // NAV
 function showPage(p){
+
+  // 🔥 RESET SEMUA HALAMAN DULU
+  resetJSON();
+  resetUpload();
+
+  // sembunyikan semua
   dashboardPage.classList.add("hidden");
   jsonPage.classList.add("hidden");
   uploadPage.classList.add("hidden");
 
+  // tampilkan sesuai menu
   if(p==="dashboard") dashboardPage.classList.remove("hidden");
   if(p==="json") jsonPage.classList.remove("hidden");
   if(p==="upload") uploadPage.classList.remove("hidden");
