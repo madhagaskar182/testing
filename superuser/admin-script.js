@@ -59,7 +59,7 @@ async function login() {
         const sessionData = { loggedIn: true, expiresAt: Date.now() + SESSION_DURATION };
         localStorage.setItem("adminSession", JSON.stringify(sessionData));
 
-        loginPage.classList.add("hidden");
+    }   loginPage.classList.add("hidden");
         app.classList.remove("hidden");
         adminPass.value = "";
         startIdleTimer();
