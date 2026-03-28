@@ -142,6 +142,30 @@ textarea{
 </head>
 
 <body>
+<div id="toast" class="toast"></div>
+
+.toast{
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #22c55e;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 10px;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: 0.3s;
+  z-index: 9999;
+}
+
+.toast.show{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast.error{
+  background: #ef4444;
+}
 
 <!-- LOGIN -->
 <div class="login" id="loginPage">
@@ -506,15 +530,28 @@ async function uploadAll(){
     }
   }
 
+function showToast(message, type="success"){
+  const toast = document.getElementById("toast");
+
+  toast.textContent = message;
+  toast.className = "toast show";
+
+  if(type === "error"){
+    toast.classList.add("error");
+  }
+
+  setTimeout(()=>{
+    toast.classList.remove("show");
+  }, 3000); // hilang otomatis 3 detik
+}
   // ================= NOTIF FINAL =================
   if(success === files.length){
-    status.innerText = "🎉 Semua file berhasil diupload!";
-    alert("🎉 Upload selesai semua!");
-  }else{
-    status.innerText = `⚠️ ${success}/${files.length} file berhasil`;
-    alert("⚠️ Ada file yang gagal upload");
+  status.innerText = "🎉 Semua file berhasil diupload!";
+  alert("🎉 Upload selesai semua!");
+}else{
+  status.innerText = `⚠️ ${success}/${files.length} file berhasil`;
+  alert("⚠️ Ada file yang gagal upload");
   }
-}
 
 // PDF
 let files=[]; 
