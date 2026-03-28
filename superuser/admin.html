@@ -271,40 +271,139 @@ function showExcel(){
 }
 
 // JSON GENERATE
-async function hashPass(p){
-  const e=new TextEncoder().encode(p);
-  const b=await crypto.subtle.digest("SHA-256",e);
-  return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');
-}
-
-let jsonData={};
-
+// ================= JSON GENERATE =================
 async function generateJSON(){
-  const f=excelFile.files[0];
-  const r=new FileReader();
-  r.onload=async e=>{
-    const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
-    const data=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-    let res={};
-    for(let d of data){
-      res[d.email.toLowerCase()]={namaFile:d.namaFile.toUpperCase(),password:await hashPass(d.password)};
+
+  const f = excelFile.files[0];
+
+  if(!f){
+    alert("⚠️ Silakan upload file Excel terlebih dahulu!");
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = async function(e){
+    try{
+
+      const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array'});
+      const sheet = wb.Sheets[wb.SheetNames[0]];
+      const data = XLSX.utils.sheet_to_json(sheet);
+
+      if(data.length === 0){
+        alert("⚠️ File kosong atau format salah!");
+        return;
+      }
+
+      let result = {};
+
+      for(let row of data){
+
+        const email = (row.email || "").toLowerCase().trim();
+        const nama = (row.namaFile || "").toUpperCase().trim();
+        const pass = (row.password || "").toString().trim();
+
+        if(!email || !nama || !pass) continue;
+
+        result[email] = {
+          namaFile: nama,
+          password: await hashPass(pass)
+        };
+      }
+
+      if(Object.keys(result).length === 0){
+        alert("⚠️ Data tidak valid!");
+        return;
+      }
+
+      jsonData = result;
+      jsonOutput.value = JSON.stringify(result, null, 2);
+
+      alert("✅ JSON berhasil dibuat!");
+
+    }catch(err){
+      console.error(err);
+      alert("❌ Gagal membaca file Excel!");
     }
-    jsonData=res;
-    jsonOutput.value=JSON.stringify(res,null,2);
   };
-  r.readAsArrayBuffer(f);
+
+  reader.readAsArrayBuffer(f);
 }
 
 // UPLOAD JSON
 async function uploadJSON(){
-  const token=tokenJson.value;
-  const content=btoa(unescape(encodeURIComponent(JSON.stringify(jsonData,null,2))));
-  await fetch("https://api.github.com/repos/valios-idn/slip-gaji/contents/dataPegawai.json",{
-    method:"PUT",
-    headers:{Authorization:`Bearer ${token}`},
-    body:JSON.stringify({message:"update",content})
-  });
-  alert("Upload JSON berhasil");
+
+  if(Object.keys(jsonData).length === 0){
+    alert("⚠️ Generate JSON dulu!");
+    return;
+  }
+
+  const token = tokenJson.value;
+
+  if(!token){
+    alert("⚠️ Token kosong!");
+    return;
+  }
+
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(jsonData,null,2))));
+  const url = "https://api.github.com/repos/valios-idn/slip-gaji/contents/dataPegawai.json";
+
+  try{
+    await fetch(url,{
+      method:"PUT",
+      headers:{
+        Authorization:`Bearer ${token}`,
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        message:"update dataPegawai",
+        content:content
+      })
+    });
+
+    alert("✅ JSON berhasil diupload!");
+
+  }catch(e){
+    alert("❌ Upload JSON gagal!");
+  }
+}
+
+/*  NOTIFIKASI */
+async function uploadAll(){
+
+  if(files.length === 0){
+    alert("⚠️ Tidak ada file!");
+    return;
+  }
+
+  const token = tokenUpload.value;
+
+  if(!token){
+    alert("⚠️ Token kosong!");
+    return;
+  }
+
+  status.innerText = "⏳ Upload sedang berjalan...";
+
+  let success = 0;
+
+  for(let i=0;i<files.length;i++){
+    try{
+      await uploadSingle(files[i], i, token);
+      success++;
+    }catch(e){
+      console.error(e);
+    }
+  }
+
+  // ================= NOTIF FINAL =================
+  if(success === files.length){
+    status.innerText = "🎉 Semua file berhasil diupload!";
+    alert("🎉 Upload selesai semua!");
+  }else{
+    status.innerText = `⚠️ ${success}/${files.length} file berhasil`;
+    alert("⚠️ Ada file yang gagal upload");
+  }
 }
 
 // PDF
@@ -326,18 +425,34 @@ function renderFiles(){
 function removeFile(i){files.splice(i,1);renderFiles();}
 
 // UPLOAD PDF
-async function uploadAll(){
-  for(let i=0;i<files.length;i++){
-    const base64=await toBase64(files[i]);
-    document.getElementById("bar"+i).style.width="100%";
+async function uploadSingle(file,i,token){
 
-    await fetch(`https://api.github.com/repos/valios-idn/slip-gaji/contents/files/${tahun.value}/${bulan.value}/${files[i].name}`,{
-      method:"PUT",
-      headers:{Authorization:`Bearer ${tokenUpload.value}`},
-      body:JSON.stringify({message:"upload",content:base64})
-    });
-  }
-  status.innerText="Selesai";
+  const bar = document.getElementById("bar"+i);
+
+  const base64 = await toBase64(file);
+
+  bar.style.width = "30%";
+
+  const path = `files/${tahun.value}/${bulan.value}/${file.name}`;
+  const url = `https://api.github.com/repos/valios-idn/slip-gaji/contents/${path}`;
+
+  bar.style.width = "60%";
+
+  const res = await fetch(url,{
+    method:"PUT",
+    headers:{
+      Authorization:`Bearer ${token}`,
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+      message:"upload slip",
+      content:base64
+    })
+  });
+
+  if(!res.ok) throw new Error();
+
+  bar.style.width = "100%";
 }
 
 // BASE64
