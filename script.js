@@ -70,6 +70,20 @@ function setupLazyLoading() {
   document.querySelectorAll('.pdf-page').forEach(c => observer.observe(c));
 }
 
+// DOWNLOAD BUTTON
+const pdfForm = document.getElementById("pdfForm");
+const viewerContainer = document.getElementById("viewerContainer");
+const downloadBtn = document.getElementById("downloadBtn");
+
+pdfForm.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    // Logika menampilkan PDF
+    viewerContainer.style.display = "block"; // tampilkan viewer PDF
+
+    // Tampilkan tombol download setelah PDF muncul
+    downloadBtn.style.display = "inline-block"; 
+});
 // ================= SUBMIT FORM (SUDAH DIUBAH) =================
 form.addEventListener('submit', async function(e) {
   e.preventDefault();
