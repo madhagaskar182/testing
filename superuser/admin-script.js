@@ -473,7 +473,7 @@ window.generateJSON = generateJSON;
 window.uploadJSON = uploadJSON;
 window.uploadAll = uploadAll;
 window.removeFile = removeFile;
-window.loadRecentFiles = loadRecentFiles;
+window.loadRecentSearches = loadRecentSearches;
 
 // ================= START APP =================
 window.addEventListener("load", () => {
