@@ -8,24 +8,21 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <style>
-body {
-  margin: 0;
-  font-family: 'Segoe UI', monospace;
-  background: #020617;
-  color: #e2e8f0;
+body{
+  margin:0;
+  font-family:'Segoe UI', monospace;
+  background:#020617;
+  color:#e2e8f0;
 }
 
-.wrapper { display: flex; }
-
 /* LOGIN */
-.login-box {
+.login{
   height:100vh;
   display:flex;
   justify-content:center;
   align-items:center;
 }
-
-.login-card {
+.login-box{
   background:#0f172a;
   padding:30px;
   border-radius:15px;
@@ -33,25 +30,29 @@ body {
   text-align:center;
 }
 
-/* SIDEBAR */
-.sidebar {
+/* LAYOUT */
+.wrapper{ display:flex; }
+
+.sidebar{
   width:220px;
   background:#0f172a;
   height:100vh;
   padding:20px;
 }
 
-.menu {
+.menu{
   padding:10px;
-  cursor:pointer;
   border-radius:8px;
+  cursor:pointer;
 }
-.menu:hover { background:#1e293b; }
+.menu:hover{ background:#1e293b; }
 
-/* CONTENT */
-.content { flex:1; padding:20px; }
+.content{
+  flex:1;
+  padding:20px;
+}
 
-.card {
+.card{
   background:#0f172a;
   padding:20px;
   border-radius:15px;
@@ -59,7 +60,7 @@ body {
 }
 
 /* FORM */
-input,select,button,textarea {
+input,select,button{
   width:100%;
   padding:10px;
   margin-top:10px;
@@ -67,58 +68,70 @@ input,select,button,textarea {
   border-radius:8px;
 }
 
-button {
+button{
   background:#3b82f6;
   color:white;
   cursor:pointer;
 }
 
-textarea {
-  height:200px;
-  background:#000;
-  color:#22c55e;
-}
-
-/* FILE LIST */
-.file-item {
+/* FILE */
+.file-item{
   background:#020617;
-  margin-top:5px;
-  padding:8px;
-  border-radius:8px;
+  padding:10px;
+  border-radius:10px;
+  margin-top:8px;
 }
 
-.file-top {
+.file-top{
   display:flex;
   justify-content:space-between;
 }
 
-.remove { color:red; cursor:pointer; }
+.remove{
+  color:red;
+  cursor:pointer;
+}
 
 /* PROGRESS */
-.progress {
+.progress{
   height:6px;
   background:#1e293b;
   border-radius:10px;
   margin-top:5px;
 }
 
-.bar {
+.bar{
   height:100%;
   width:0%;
   background:#22c55e;
-  border-radius:10px;
-  transition:0.3s;
 }
 
-.hidden { display:none; }
+/* TOKEN */
+.token-box{
+  margin-top:10px;
+}
+
+/* OUTPUT */
+textarea{
+  width:100%;
+  height:200px;
+  background:#000;
+  color:#22c55e;
+  margin-top:10px;
+  border-radius:10px;
+  padding:10px;
+}
+
+/* HIDDEN */
+.hidden{ display:none; }
 </style>
 </head>
 
 <body>
 
 <!-- LOGIN -->
-<div class="login-box" id="loginPage">
-  <div class="login-card">
+<div class="login" id="loginPage">
+  <div class="login-box">
     <h2>🔐 Admin Login</h2>
     <input type="password" id="adminPass" placeholder="Password">
     <button onclick="login()">Login</button>
@@ -133,7 +146,7 @@ textarea {
   <h3>⚡ ADMIN</h3>
   <div class="menu" onclick="showPage('dashboard')">Dashboard</div>
   <div class="menu" onclick="showPage('json')">JSON Generator</div>
-  <div class="menu" onclick="showPage('upload')">Upload Slip Gaji</div>
+  <div class="menu" onclick="showPage('upload')">Upload Slip</div>
 </div>
 
 <!-- CONTENT -->
@@ -149,18 +162,20 @@ textarea {
   <h2>JSON Generator</h2>
 
   <input type="file" id="excelFile">
+
+  <div id="jsonFileList"></div>
+
   <button onclick="generateJSON()">Generate JSON</button>
 
+  <!-- TOKEN -->
+  <input type="text" id="tokenJson">
+
+  <button onclick="uploadJSON()">Upload JSON ke GitHub</button>
+
   <textarea id="jsonOutput"></textarea>
-
-  <input type="text" id="token" placeholder="GitHub Token">
-
-  <button onclick="uploadJSON()">Upload ke GitHub</button>
-
-  <div id="jsonStatus"></div>
 </div>
 
-<!-- UPLOAD PDF -->
+<!-- UPLOAD -->
 <div id="uploadPage" class="card hidden">
   <h2>Upload Slip Gaji</h2>
 
@@ -173,11 +188,23 @@ textarea {
     <option value="01">Januari</option>
     <option value="02">Februari</option>
     <option value="03">Maret</option>
+    <option value="04">April</option>
+    <option value="05">Mei</option>
+    <option value="06">Juni</option>
+    <option value="07">Juli</option>
+    <option value="08">Agustus</option>
+    <option value="09">September</option>
+    <option value="10">Oktober</option>
+    <option value="11">November</option>
+    <option value="12">Desember</option>
   </select>
 
   <input type="file" id="pdfFiles" multiple accept="application/pdf">
 
   <div id="fileList"></div>
+
+  <!-- TOKEN -->
+  <input type="text" id="tokenUpload">
 
   <button onclick="uploadAll()">Upload Semua</button>
 
@@ -188,26 +215,21 @@ textarea {
 </div>
 
 <script>
-
 // ================= LOGIN =================
 const ADMIN_HASH = "eb8dd3569264665279b7715826fcf2a291b074137704e18d06574f321fd91a58";
 
-async function hash(text){
-  const enc = new TextEncoder().encode(text);
-  const buf = await crypto.subtle.digest("SHA-256", enc);
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+async function hash(t){
+  const e=new TextEncoder().encode(t);
+  const b=await crypto.subtle.digest("SHA-256",e);
+  return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');
 }
 
 async function login(){
-  const pass = document.getElementById("adminPass").value;
-  const h = await hash(pass);
-
-  if(h === ADMIN_HASH){
-    document.getElementById("loginPage").style.display="none";
-    document.getElementById("app").classList.remove("hidden");
-  }else{
-    alert("Password salah!");
-  }
+  const h=await hash(adminPass.value);
+  if(h===ADMIN_HASH){
+    loginPage.classList.add("hidden");
+    app.classList.remove("hidden");
+  } else alert("Password salah!");
 }
 
 // ================= NAV =================
@@ -221,24 +243,41 @@ function showPage(p){
   if(p==="upload") uploadPage.classList.remove("hidden");
 }
 
-// ================= TOKEN AUTO =================
-document.addEventListener("DOMContentLoaded", ()=>{
-  document.getElementById("token").value = "ISI_TOKEN_KAMU_DISINI";
-});
+// ================= AUTO TOKEN =================
+const DEFAULT_TOKEN = "_pat_11CAL3MIA03YlOdbk6DTFt_K7vkaYfLDFxgt5w5chcvjunGjaWA79oRknfplcB62Df4IBWLSBJw41Bw1j1";
 
-// ================= HASH PASSWORD =================
+tokenJson.value = DEFAULT_TOKEN;
+tokenUpload.value = DEFAULT_TOKEN;
+
+// ================= HASH PASS =================
 async function hashPass(p){
-  const enc=new TextEncoder().encode(p);
-  const buf=await crypto.subtle.digest("SHA-256",enc);
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  const e=new TextEncoder().encode(p);
+  const b=await crypto.subtle.digest("SHA-256",e);
+  return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');
 }
 
-// ================= JSON GENERATE =================
-let jsonData = {};
+// ================= JSON =================
+let jsonData={};
+
+excelFile.onchange=e=>{
+  const f=e.target.files[0];
+  if(!f) return;
+
+  jsonFileList.innerHTML=`
+    <div class="file-item">
+      ${f.name}
+      <span class="remove" onclick="removeExcel()">✖</span>
+    </div>`;
+};
+
+function removeExcel(){
+  excelFile.value="";
+  jsonFileList.innerHTML="";
+}
 
 async function generateJSON(){
-  const f = document.getElementById("excelFile").files[0];
-  if(!f) return alert("Upload Excel dulu");
+  const f=excelFile.files[0];
+  if(!f) return alert("Upload Excel!");
 
   const r=new FileReader();
   r.onload=async e=>{
@@ -249,69 +288,38 @@ async function generateJSON(){
 
     for(let d of data){
       if(!d.email) continue;
-
-      res[d.email.toLowerCase()] = {
-        namaFile: d.namaFile.toUpperCase(),
-        password: await hashPass(d.password)
+      res[d.email.toLowerCase()]={
+        namaFile:d.namaFile.toUpperCase(),
+        password:await hashPass(d.password)
       };
     }
 
-    jsonData = res;
-    jsonOutput.value = JSON.stringify(res,null,2);
+    jsonData=res;
+    jsonOutput.value=JSON.stringify(res,null,2);
   };
-
   r.readAsArrayBuffer(f);
 }
 
 // ================= UPLOAD JSON =================
 async function uploadJSON(){
+  const token=tokenJson.value;
 
-  if(Object.keys(jsonData).length===0)
-    return alert("Generate dulu!");
+  const content=btoa(unescape(encodeURIComponent(JSON.stringify(jsonData,null,2))));
+  const url="https://api.github.com/repos/valios-idn/slip-gaji/contents/dataPegawai.json";
 
-  const token = document.getElementById("token").value;
-  const status = document.getElementById("jsonStatus");
+  await fetch(url,{
+    method:"PUT",
+    headers:{
+      Authorization:`Bearer ${token}`,
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+      message:"update json",
+      content:content
+    })
+  });
 
-  status.innerText = "⏳ Uploading...";
-
-  const repo="valios-idn/slip-gaji";
-  const path="dataPegawai.json";
-
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(jsonData,null,2))));
-  const url=`https://api.github.com/repos/${repo}/contents/${path}`;
-
-  try{
-    let sha=null;
-
-    const get=await fetch(url,{
-      headers:{Authorization:`Bearer ${token}`}
-    });
-
-    if(get.ok){
-      const d=await get.json();
-      sha=d.sha;
-    }
-
-    const res=await fetch(url,{
-      method:"PUT",
-      headers:{
-        Authorization:`Bearer ${token}`,
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({
-        message:"update dataPegawai",
-        content:content,
-        sha:sha
-      })
-    });
-
-    if(!res.ok) throw new Error();
-
-    status.innerText="✅ JSON berhasil diupload!";
-
-  }catch(e){
-    status.innerText="❌ Upload gagal!";
-  }
+  alert("JSON Uploaded!");
 }
 
 // ================= FILE =================
@@ -327,17 +335,14 @@ function renderFiles(){
 
   files.forEach((f,i)=>{
     fileList.innerHTML+=`
-      <div class="file-item">
-        <div class="file-top">
-          ${f.name}
-          <span class="remove" onclick="removeFile(${i})">✖</span>
-        </div>
-        <div class="progress">
-          <div class="bar" id="bar${i}"></div>
-        </div>
-        <small id="status${i}">Menunggu...</small>
+    <div class="file-item">
+      <div class="file-top">
+        ${f.name}
+        <span class="remove" onclick="removeFile(${i})">✖</span>
       </div>
-    `;
+      <div class="progress"><div class="bar" id="bar${i}"></div></div>
+      <small id="status${i}">Menunggu...</small>
+    </div>`;
   });
 }
 
@@ -346,67 +351,45 @@ function removeFile(i){
   renderFiles();
 }
 
-// ================= UPLOAD PDF =================
+// ================= UPLOAD =================
 async function uploadAll(){
-
-  const token=document.getElementById("token").value;
-  const th=tahun.value;
-  const bl=bulan.value;
+  const token=tokenUpload.value;
 
   for(let i=0;i<files.length;i++){
-    await uploadSingle(files[i],i,token,th,bl);
+    await uploadSingle(files[i],i,token);
   }
 
-  status.innerText="✅ Semua upload selesai";
+  status.innerText="✅ Selesai";
 }
 
-async function uploadSingle(file,i,token,th,bl){
-
+async function uploadSingle(file,i,token){
   const bar=document.getElementById("bar"+i);
   const stat=document.getElementById("status"+i);
 
-  stat.innerText="Upload...";
-
+  stat.innerText="Convert...";
   const base64=await toBase64(file);
 
-  const repo="valios-idn/slip-gaji";
-  const path=`files/${th}/${bl}/${file.name}`;
-  const url=`https://api.github.com/repos/${repo}/contents/${path}`;
+  bar.style.width="30%";
 
-  try{
+  const path=`files/${tahun.value}/${bulan.value}/${file.name}`;
+  const url=`https://api.github.com/repos/valios-idn/slip-gaji/contents/${path}`;
 
-    let sha=null;
+  stat.innerText="Upload...";
 
-    const get=await fetch(url,{
-      headers:{Authorization:`Bearer ${token}`}
-    });
+  await fetch(url,{
+    method:"PUT",
+    headers:{
+      Authorization:`Bearer ${token}`,
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+      message:"upload slip",
+      content:base64
+    })
+  });
 
-    if(get.ok){
-      const d=await get.json();
-      sha=d.sha;
-    }
-
-    const res=await fetch(url,{
-      method:"PUT",
-      headers:{
-        Authorization:`Bearer ${token}`,
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({
-        message:"upload slip",
-        content:base64,
-        sha:sha
-      })
-    });
-
-    if(!res.ok) throw new Error();
-
-    bar.style.width="100%";
-    stat.innerText="✅ Berhasil";
-
-  }catch{
-    stat.innerText="❌ Gagal";
-  }
+  bar.style.width="100%";
+  stat.innerText="✅ Berhasil";
 }
 
 // ================= BASE64 =================
@@ -417,7 +400,7 @@ function toBase64(file){
     r.readAsDataURL(file);
   });
 }
-
 </script>
+
 </body>
 </html>
