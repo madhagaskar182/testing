@@ -151,7 +151,7 @@ button:hover {
 
 /* ================= FOOTER ================= */
 .footer-text {
-  font-size: 12.5px;
+  font-size: 14px;
   text-align: center;
   padding: 20px 0;
   margin-top: 30px;
@@ -192,7 +192,7 @@ button:hover {
   }
 
   .footer-text {
-    font-size: 10px;
+    font-size: 12px;
   }
 
   #viewerContainer {
