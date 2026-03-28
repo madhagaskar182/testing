@@ -108,6 +108,11 @@ textarea {
   font-size: 13px;
 }
 
+/* TOKEN STYLE */
+#token {
+  letter-spacing: 2px;
+}
+
 /* RESPONSIVE */
 @media (max-width: 600px) {
   .form-grid {
@@ -149,6 +154,11 @@ textarea {
       <button onclick="generate()">Generate JSON</button>
       <button onclick="downloadJSON()">Download JSON</button>
 
+      <!-- TOKEN -->
+      <div class="full">
+        <input type="password" id="token" placeholder="GitHub Token">
+      </div>
+
       <!-- BUTTON FULL -->
       <button class="full" onclick="uploadGitHub()">Upload ke GitHub</button>
 
@@ -183,6 +193,11 @@ async function login(){
     alert("Password salah!");
   }
 }
+
+// ================= AUTO TOKEN =================
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("token").value = "pat_11CAL3MIA0ajH8eltzw2Ob_VWJz5mpneuWtltJ6dJBi5O7Yz7tGZck1GQMhnV66pkLHVNDARITUfyysRDi";
+});
 
 // ================= DRAG DROP =================
 let fileGlobal = null;
@@ -269,9 +284,15 @@ async function uploadGitHub(){
     return;
   }
 
+  const token = document.getElementById("token").value;
+
+  if(!token){
+    alert("Token kosong!");
+    return;
+  }
+
   status.textContent = "⏳ Uploading...";
 
-  const token = "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";
   const repo = "valios-idn/slip-gaji";
   const path = "dataPegawai.json";
 
