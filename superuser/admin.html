@@ -291,9 +291,10 @@ async function uploadGitHub(){
     return;
   }
 
-  status.textContent = "⏳ Uploading...";
+  const status = document.getElementById("status");
+  status.textContent = "⏳ Uploading ke GitHub...";
 
-  const repo = "valios-idn/slip-gaji";
+  const repo = "valios-idn/slip-gaji"; // ⚠️ ganti kalau beda
   const path = "dataPegawai.json";
 
   const content = btoa(unescape(encodeURIComponent(JSON.stringify(dataResult,null,2))));
@@ -302,19 +303,25 @@ async function uploadGitHub(){
   try{
     let sha = null;
 
+    // ================= CEK FILE =================
     const get = await fetch(url,{
-      headers:{ Authorization:`token ${token}` }
+      headers:{
+        Authorization:`Bearer ${token}`
+      }
     });
 
     if(get.ok){
       const d = await get.json();
       sha = d.sha;
+    } else {
+      console.log("GET ERROR:", await get.text());
     }
 
+    // ================= UPLOAD =================
     const res = await fetch(url,{
       method:"PUT",
       headers:{
-        Authorization:`token ${token}`,
+        Authorization:`Bearer ${token}`,
         "Content-Type":"application/json"
       },
       body: JSON.stringify({
@@ -324,12 +331,19 @@ async function uploadGitHub(){
       })
     });
 
-    if(!res.ok) throw new Error();
+    const result = await res.json();
+    console.log("UPLOAD RESULT:", result);
 
-    status.textContent = "✅ Upload berhasil!";
+    if(!res.ok){
+      throw new Error(result.message || "Upload gagal");
+    }
+
+    status.textContent = "✅ Upload berhasil ke GitHub!";
+
   }catch(err){
     console.error(err);
-    status.textContent = "❌ Upload gagal!";
+    status.textContent = "❌ ERROR: " + err.message;
+    alert("Gagal upload:\n" + err.message);
   }
 }
 </script>
