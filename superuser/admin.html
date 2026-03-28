@@ -37,17 +37,50 @@
     <div class="content">
 
         <!-- DASHBOARD -->
+<!-- DASHBOARD -->
 <div id="dashboardPage" class="card">
-    <h2>Selamat Datang di Admin Dashboard</h2>
+    <h2>👋 Selamat Datang di Admin Dashboard</h2>
     <p>Sistem Slip Gaji - Valios IDN</p>
 
     <div style="margin-top: 30px;">
-        <h3>🔍 20 Email Terakhir yang Mencari Slip Gaji</h3>
-        <button onclick="loadRecentSearches()" style="margin-bottom: 15px;">🔄 Refresh Daftar</button>
+        <h3>📂 Daftar Slip Gaji yang Sudah Diupload</h3>
         
-        <div id="recentSearchesList" class="recent-files">
-            <!-- Data akan diisi oleh JavaScript -->
-            <p style="color:#888; text-align:center; padding:20px;">Klik tombol Refresh untuk memuat 20 email terbaru...</p>
+        <div style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+            <div>
+                <strong>Tahun:</strong><br>
+                <select id="dashTahun">
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                </select>
+            </div>
+            
+            <div>
+                <strong>Bulan:</strong><br>
+                <select id="dashBulan">
+                    <option value="01">Januari</option>
+                    <option value="02">Februari</option>
+                    <option value="03">Maret</option>
+                    <option value="04">April</option>
+                    <option value="05">Mei</option>
+                    <option value="06">Juni</option>
+                    <option value="07">Juli</option>
+                    <option value="08">Agustus</option>
+                    <option value="09">September</option>
+                    <option value="10">Oktober</option>
+                    <option value="11">November</option>
+                    <option value="12">Desember</option>
+                </select>
+            </div>
+            
+            <div style="align-self: flex-end;">
+                <button onclick="loadFilesByMonth()">🔍 Tampilkan Daftar</button>
+            </div>
+        </div>
+
+        <div id="filesList" class="recent-files" style="max-height: 550px; overflow-y: auto;">
+            <p style="color:#888; text-align:center; padding:40px;">
+                Pilih Tahun dan Bulan, lalu klik "Tampilkan Daftar"
+            </p>
         </div>
     </div>
 </div>
