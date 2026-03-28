@@ -182,19 +182,20 @@ document.addEventListener('DOMContentLoaded', () => {
     select.appendChild(opt);
   }
 
-// ===============PASSWORD=====================
-  document.querySelector(".toggle-password").addEventListener("click", function () {
-  const input = document.querySelector(this.getAttribute("toggle"));
+// =============== PASSWORD TOGGLE =====================
+document.querySelectorAll(".toggle-password").forEach(icon => {
+  icon.addEventListener("click", function () {
+    const target = this.getAttribute("toggle");
+    const input = document.querySelector(target);
 
-  if (input.type === "password") {
-    input.type = "text";
-    this.classList.remove("fa-eye");
-    this.classList.add("fa-eye-slash");
-  } else {
-    input.type = "password";
-    this.classList.remove("fa-eye-slash");
-    this.classList.add("fa-eye");
-  }
-});
-  select.value = tahun;
+    if (!input) return; // aman dari error
+
+    if (input.type === "password") {
+      input.type = "text";
+      this.classList.replace("fa-eye", "fa-eye-slash");
+    } else {
+      input.type = "password";
+      this.classList.replace("fa-eye-slash", "fa-eye");
+    }
+  });
 });
