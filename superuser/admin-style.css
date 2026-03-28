@@ -152,3 +152,86 @@ textarea{
 .toast.error{
   background: #ef4444;
 }
+
+<style>
+    .token-card {
+        background: linear-gradient(135deg, #f0f7ff, #e0f0ff);
+        padding: 18px;
+        border-radius: 12px;
+        border: 1px solid #b3d9ff;
+        margin-bottom: 20px;
+    }
+
+    .filter-container {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: end;
+        margin-bottom: 20px;
+        background: #f8f9fa;
+        padding: 18px;
+        border-radius: 12px;
+    }
+
+    .filter-group {
+        flex: 1;
+        min-width: 140px;
+    }
+
+    .filter-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .filter-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+
+    .btn-primary {
+        background: #0066ff;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-primary:hover {
+        background: #0052cc;
+        transform: translateY(-2px);
+    }
+
+    .files-result {
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        padding: 10px;
+        min-height: 200px;
+    }
+
+    .file-item {
+        padding: 12px 15px;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background 0.2s;
+    }
+
+    .file-item:hover {
+        background: #f8fbff;
+    }
+
+    .file-item:last-child {
+        border-bottom: none;
+    }
+</style>
