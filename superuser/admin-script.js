@@ -329,32 +329,31 @@ function showToast(message, type = "success") {
 }
 
 // ================= DASHBOARD - DAFTAR FILE PER BULAN =================
+// Token khusus Dashboard (berbeda dari token Upload & JSON)
+const DASHBOARD_GITHUB_TOKEN = "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";  // ← GANTI DENGAN TOKEN KHUSUS DASHBOARD KAMU
+
+const REPO_NAME = "valios-idn/slip-gaji";
+
 async function loadFilesByMonth() {
     const container = document.getElementById("filesList");
     const tahun = document.getElementById("dashTahun").value;
     const bulan = document.getElementById("dashBulan").value;
 
     if (!tahun || !bulan) {
-        container.innerHTML = `<p style="color:red;">Pilih tahun dan bulan terlebih dahulu.</p>`;
+        container.innerHTML = `<p style="color:red;">⚠️ Pilih tahun dan bulan terlebih dahulu.</p>`;
         return;
     }
 
     container.innerHTML = `<p style="color:#888; text-align:center;">⏳ Memuat daftar file...</p>`;
 
-    const token = tokenUpload.value.trim() || tokenJson.value.trim();
-    if (!token) {
-        container.innerHTML = `<p style="color:red;">⚠️ Token GitHub belum diisi di bagian JSON Generator atau Upload Slip.</p>`;
-        return;
-    }
-
     const folderPath = `files/${tahun}/${bulan}`;
 
     try {
-        const url = `https://api.github.com/repos/valios-idn/slip-gaji/contents/${folderPath}`;
+        const url = `https://api.github.com/repos/${REPO_NAME}/contents/${folderPath}`;
 
         const res = await fetch(url, {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${DASHBOARD_GITHUB_TOKEN}`,
                 Accept: "application/vnd.github+json"
             }
         });
@@ -367,15 +366,13 @@ async function loadFilesByMonth() {
         }
 
         if (!res.ok) {
-            throw new Error("Gagal mengambil daftar file");
+            throw new Error(`Gagal mengambil data (status: ${res.status})`);
         }
 
         const files = await res.json();
 
-        // Filter hanya file .PDF (case insensitive)
         const pdfFiles = files.filter(file => 
-            file.type === "file" && 
-            file.name.toUpperCase().endsWith(".PDF")
+            file.type === "file" && file.name.toUpperCase().endsWith(".PDF")
         );
 
         if (pdfFiles.length === 0) {
@@ -383,22 +380,21 @@ async function loadFilesByMonth() {
             return;
         }
 
-        // Urutkan berdasarkan nama file
         pdfFiles.sort((a, b) => a.name.localeCompare(b.name));
 
-        let html = `<p style="margin-bottom:10px; color:#0066cc;">
-            <strong>${pdfFiles.length} file ditemukan</strong> - ${getMonthName(bulan)} ${tahun}
+        let html = `<p style="margin-bottom:12px; color:#0066cc; font-weight:500;">
+            📄 ${pdfFiles.length} file ditemukan — ${getMonthName(bulan)} ${tahun}
         </p>`;
         
         html += `<div style="max-height:480px; overflow-y:auto;">`;
 
         pdfFiles.forEach(file => {
             html += `
-                <div class="file-item" style="padding:10px 12px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
-                    <div style="flex:1;">
+                <div style="padding:11px 12px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+                    <div style="flex:1; word-break:break-all;">
                         <strong>${file.name}</strong>
                     </div>
-                    <div style="font-size:0.85em; color:#666;">
+                    <div style="font-size:0.85em; color:#555; white-space:nowrap; margin-left:10px;">
                         ${formatFileSize(file.size)}
                     </div>
                 </div>`;
@@ -408,12 +404,13 @@ async function loadFilesByMonth() {
         container.innerHTML = html;
 
     } catch (err) {
-        console.error(err);
-        container.innerHTML = `<p style="color:red;">❌ Gagal memuat daftar file. Pastikan token GitHub valid dan memiliki akses repo.</p>`;
+        console.error("Error loadFilesByMonth:", err);
+        container.innerHTML = `<p style="color:red;">❌ Gagal memuat daftar file.<br>
+            Periksa apakah token Dashboard masih valid.</p>`;
     }
 }
 
-// Helper function
+// Helper Functions
 function getMonthName(bulan) {
     const months = {
         "01": "Januari", "02": "Februari", "03": "Maret", "04": "April",
@@ -424,7 +421,7 @@ function getMonthName(bulan) {
 }
 
 function formatFileSize(bytes) {
-    if (!bytes) return "";
+    if (!bytes || bytes === 0) return "-";
     if (bytes < 1024) return bytes + " B";
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
     return (bytes / (1024 * 1024)).toFixed(1) + " MB";
