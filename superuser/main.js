@@ -102,13 +102,14 @@ window.removeFile = i=>{
 // UPLOAD PDF
 uploadPDFBtn.onclick = async ()=>{
     const token = tokenUpload.value;
-    const tahun = tahun.value;
-    const bulan = bulan.value;
+
+    const tahunVal = document.getElementById("tahun").value;
+    const bulanVal = document.getElementById("bulan").value;
 
     for(let f of files){
         const base64 = await toBase64(f);
 
-        await fetch(`https://api.github.com/repos/valios-idn/slip-gaji/contents/files/${tahun}/${bulan}/${f.name}`,{
+        await fetch(`https://api.github.com/repos/valios-idn/slip-gaji/contents/files/${tahunVal}/${bulanVal}/${f.name}`,{
             method:"PUT",
             headers:{Authorization:`Bearer ${token}`},
             body: JSON.stringify({message:"upload", content:base64})
