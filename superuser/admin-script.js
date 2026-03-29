@@ -159,18 +159,24 @@ function initElements() {
 
 // ================= EVENT LISTENERS =================
 function setupEventListeners() {
+    // Login button
+    document.getElementById("btnLogin")?.addEventListener("click", login);
+
+    // Excel Drop
     document.getElementById("excelDrop")?.addEventListener("click", () => excelFile.click());
     excelFile?.addEventListener("change", () => {
         const f = excelFile.files[0];
         if (f) jsonFileList.innerHTML = `<div class="file-item">${f.name}</div>`;
     });
 
+    // PDF Drop
     document.getElementById("pdfDrop")?.addEventListener("click", () => pdfFiles.click());
     pdfFiles?.addEventListener("change", e => {
         files = Array.from(e.target.files);
         renderFiles();
     });
 
+    // Logout
     document.getElementById("btnLogout")?.addEventListener("click", logout);
 
     document.addEventListener("mousemove", resetIdleTimer);
