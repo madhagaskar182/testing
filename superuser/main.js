@@ -34,32 +34,44 @@ function showExcel(){
 }
 
 // GENERATE JSON
-generateJSONBtn.onclick = async ()=>{
+generateJSONBtn.onclick = async () => {
     const file = excelFile.files[0];
-    if(!file) return alert("Pilih file!");
+    if (!file) return alert("Pilih file!");
 
     const reader = new FileReader();
-    reader.onload = async e=>{
-        const wb = XLSX.read(new Uint8Array(e.target.result), {type:"array"});
-        const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+
+    reader.onload = async e => {
+        const wb = XLSX.read(new Uint8Array(e.target.result), { type: "array" });
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
 
         const result = {};
-        for(let r of rows){
-            const email = r.email?.toLowerCase().trim();
-            const nama = r.namafile?.toUpperCase().trim();
-            const pass = r.password?.toString();
 
-            if(email && nama && pass){
-                result[email]={
-                    namaFile:nama,
-                    password: await hashPass(pass)
-                };
+        for (let row of rows) {
+            // 🔥 NORMALISASI HEADER (ANTI ERROR)
+            const normalized = {};
+            for (let key in row) {
+                normalized[key.toLowerCase().replace(/\s/g, "")] = row[key];
             }
+
+            const email = (normalized.email || "").toLowerCase().trim();
+            const nama = (normalized.namafile || "").toUpperCase().trim();
+            const pass = (normalized.password || "").toString().trim();
+
+            if (!email || !nama || !pass) continue;
+
+            result[email] = {
+                namaFile: nama,
+                password: await hashPass(pass) // SHA-256
+            };
         }
 
         jsonData = result;
-        jsonOutput.value = JSON.stringify(result,null,2);
+        jsonOutput.value = JSON.stringify(result, null, 2);
+
+        alert("✅ JSON berhasil dibuat!");
     };
+
     reader.readAsArrayBuffer(file);
 };
 
