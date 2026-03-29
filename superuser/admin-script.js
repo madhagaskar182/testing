@@ -1,5 +1,5 @@
 // ================= KONSTANTA & VARIABEL GLOBAL =================
-const ADMIN_HASH = "eb8dd3569264665279b7715826fcf2a291b074137704e18d06574f321fd91a58";
+const ADMIN_HASH = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9";
 
 let sessionTimeout;
 const SESSION_DURATION = 60 * 60 * 1000; // 60 menit
