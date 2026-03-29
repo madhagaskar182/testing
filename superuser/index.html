@@ -11,65 +11,66 @@
 <body>
 
 <!-- LOGIN PANEL -->
-<div id="loginPanel" class="h-screen flex items-center justify-center">
-  <div class="bg-white shadow-xl rounded-lg p-8 w-96">
-    <h1 class="text-2xl font-bold mb-6 text-center">Admin Login</h1>
+<div id="loginPanel">
+  <div class="login-box">
+    <h2 class="text-center mb-6">Admin Login</h2>
     <input type="text" id="username" placeholder="Username">
     <input type="password" id="password" placeholder="Password">
     <button id="loginBtn">Login</button>
-    <p id="loginError" class="text-red-500 mt-2 hidden">Username atau password salah</p>
+    <p id="loginError" style="color:red;margin-top:10px;display:none;">Username atau password salah</p>
   </div>
 </div>
 
 <!-- ADMIN PANEL -->
-<div id="adminPanel" class="hidden flex h-screen">
+<div id="adminPanel" style="display:flex; height:100vh;">
   <!-- Sidebar -->
-  <div class="w-64 bg-gray-800 text-white flex flex-col">
-    <div class="text-center font-bold text-xl py-6 border-b border-gray-700">Admin Panel</div>
-    <ul class="flex-1">
-      <li><button class="menuBtn" data-menu="dashboard">Dashboard</button></li>
-      <li><button class="menuBtn" data-menu="generateJson">Generate JSON</button></li>
-      <li><button class="menuBtn" data-menu="uploadPdf">Upload PDF</button></li>
-    </ul>
+  <div class="sidebar">
+    <h2>Admin Panel</h2>
+    <button class="menuBtn" data-menu="dashboard">Dashboard</button>
+    <button class="menuBtn" data-menu="generateJson">Generate JSON</button>
+    <button class="menuBtn" data-menu="uploadPdf">Upload PDF</button>
     <button id="logoutBtn">Log Out</button>
   </div>
 
-  <!-- CONTENT -->
-  <div class="flex-1 p-6 overflow-auto">
+  <!-- Main content -->
+  <div class="main-content">
     <!-- Dashboard -->
-    <div id="dashboard" class="menuContent hidden">
-      <h2>Dashboard</h2>
-      <div class="flex gap-4 mb-4">
-        <select id="selectYear"></select>
-        <select id="selectMonth"></select>
+    <div id="dashboard" class="menuContent">
+      <h3>Dashboard</h3>
+      <div>
+        Tahun: <select id="selectYear"></select>
+        Bulan: <select id="selectMonth"></select>
       </div>
-      <input type="text" id="githubToken" placeholder="GitHub Token">
-      <button id="loadFiles">Tampilkan File</button>
-      <ul id="fileList"></ul>
+      <div style="margin-top:10px;">
+        GitHub Token: <input type="text" id="githubToken" style="width:100%;">
+      </div>
+      <button id="loadFiles" class="primary" style="margin-top:10px;">Tampilkan File</button>
+      <ul id="fileList" class="file-list" style="margin-top:10px;"></ul>
     </div>
 
     <!-- Generate JSON -->
-    <div id="generateJson" class="menuContent hidden">
-      <div id="dropZoneExcel">
-        Drag & Drop file Excel di sini atau klik
-        <input type="file" id="excelInput" accept=".xlsx" multiple class="hidden">
+    <div id="generateJson" class="menuContent">
+      <h3>Generate JSON</h3>
+      <div id="dropZoneExcel" class="dropzone">
+        Drag & Drop Excel di sini atau klik
+        <input type="file" id="excelInput" accept=".xlsx" multiple hidden>
       </div>
-      <div id="uploadedFiles"></div>
-      <button id="generateJsonBtn">Generate JSON</button>
+      <div id="uploadedFiles" class="file-list"></div>
+      <button id="generateJsonBtn" class="success">Generate JSON</button>
       <pre id="jsonPreview"></pre>
-      <button id="uploadJsonBtn">Upload JSON ke GitHub</button>
+      <button id="uploadJsonBtn" class="primary">Upload JSON ke GitHub</button>
     </div>
 
     <!-- Upload PDF -->
-    <div id="uploadPdf" class="menuContent hidden">
-      <select id="pdfYear"></select>
-      <select id="pdfMonth"></select>
-      <div id="dropZonePdf">
-        Drag & Drop file PDF di sini atau klik
-        <input type="file" id="pdfInput" accept=".pdf" multiple class="hidden">
+    <div id="uploadPdf" class="menuContent">
+      <h3>Upload PDF</h3>
+      Tahun: <select id="pdfYear"></select>
+      Bulan: <select id="pdfMonth"></select>
+      <div id="dropZonePdf" class="dropzone">Drag & Drop PDF di sini atau klik
+        <input type="file" id="pdfInput" accept=".pdf" multiple hidden>
       </div>
-      <div id="pdfFilesList"></div>
-      <button id="uploadPdfBtn">Upload PDF</button>
+      <div id="pdfFilesList" class="file-list"></div>
+      <button id="uploadPdfBtn" class="primary">Upload PDF</button>
       <div id="pdfLoading">
         <div id="pdfProgress">0%</div>
       </div>
@@ -78,8 +79,7 @@
 </div>
 
 <div id="toast" class="toast"></div>
-
 <script src="utils.js"></script>
-<script src="app_pro.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
