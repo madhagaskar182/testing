@@ -72,8 +72,6 @@ function setupLazyLoading() {
 
 // DOWNLOAD BUTTON
 const pdfForm = document.getElementById("pdfForm");
-const viewerContainer = document.getElementById("viewerContainer");
-const downloadBtn = document.getElementById("downloadBtn");
 
 pdfForm.addEventListener("submit", function(e) {
     e.preventDefault();
