@@ -21,6 +21,9 @@ window.addEventListener("DOMContentLoaded", () => {
     el("menuDashboard").onclick = ()=>showPage("dashboard");
     el("menuJSON").onclick = ()=>showPage("json");
     el("menuUpload").onclick = ()=>showPage("upload");
+    el("btnLoadFile").addEventListener("click", () => {
+    el("btnDeleteSelected").classList.remove("hidden");
+    });
 
     // LOAD DASHBOARD
     const btn = el("btnLoadFile");
