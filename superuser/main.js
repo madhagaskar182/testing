@@ -227,7 +227,12 @@ window.removeFile = (i)=>{
     files.splice(i,1);
     renderFiles();
 };
-
+function setUploadStatus(text){
+    const elStatus = document.getElementById("uploadPDFStatus");
+    if(elStatus){
+        elStatus.innerText = text;
+    }
+}
 async function uploadPDF(){
     const token = el("tokenUpload").value.trim();
     if(!token) return alert("Token kosong!");
