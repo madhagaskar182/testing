@@ -3,73 +3,90 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Slip Gaji Pegawai</title>
+  <title>Payroll SaaS</title>
 
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
+
 <body>
 
-<div class="card">
+<div class="app">
 
-  <!-- LOGO -->
-  <img src="images/logo.png" alt="Logo" class="logo"
-        onerror="this.src='https://via.placeholder.com/110'">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <h2 class="brand">Payroll App</h2>
+    <p class="menu active">Slip Gaji</p>
+  </aside>
 
-  <h1>Slip Gaji Pegawai</h1>
+  <!-- MAIN -->
+  <main class="main">
 
-  <form id="pdfForm">
-  <label for="tahun">Tahun</label>
-  <select id="tahun" required>
-    <option value="">Pilih Tahun</option>
-    <option value="2026">2026</option>
-    <option value="2027">2027</option>
-  </select>
+    <div class="topbar">
+      <h1>Slip Gaji Pegawai</h1>
+    </div>
 
-  <label for="bulan">Bulan</label>
-  <select id="bulan" required>
-    <option value="">Pilih Bulan</option>
-    <option value="01">Januari</option>
-    <option value="02">Februari</option>
-    <option value="03">Maret</option>
-    <option value="04">April</option>
-    <option value="05">Mei</option>
-    <option value="06">Juni</option>
-    <option value="07">Juli</option>
-    <option value="08">Agustus</option>
-    <option value="09">September</option>
-    <option value="10">Oktober</option>
-    <option value="11">November</option>
-    <option value="12">Desember</option>
-  </select>
+    <div class="content">
 
-  <label for="nip">Email</label>
-  <input type="email" id="email" placeholder="Masukkan Email" required>
-    
-  <label>Password</label>
-<div class="password-box">
-  <input type="password" id="password" placeholder="Masukkan password">
-  <span data-toggle="#password" class="fa-regular toggle-password fa-eye" title="Show/Hide Password"></span>
+      <!-- FORM -->
+      <div class="card">
+        <form id="pdfForm">
+
+          <label>Tahun</label>
+          <select id="tahun" required>
+            <option value="">Pilih Tahun</option>
+            <option value="2026">2026</option>
+            <option value="2027">2027</option>
+          </select>
+
+          <label>Bulan</label>
+          <select id="bulan" required>
+            <option value="">Pilih Bulan</option>
+            <option value="01">Januari</option>
+            <option value="02">Februari</option>
+            <option value="03">Maret</option>
+            <option value="04">April</option>
+            <option value="05">Mei</option>
+            <option value="06">Juni</option>
+            <option value="07">Juli</option>
+            <option value="08">Agustus</option>
+            <option value="09">September</option>
+            <option value="10">Oktober</option>
+            <option value="11">November</option>
+            <option value="12">Desember</option>
+          </select>
+
+          <label>Email</label>
+          <input type="email" id="email" required>
+
+          <label>Password</label>
+          <div class="password-box">
+            <input type="password" id="password">
+            <span data-toggle="#password" class="fa-regular toggle-password fa-eye"></span>
+          </div>
+
+          <button type="submit">Tampilkan Slip</button>
+
+        </form>
+
+        <div id="pesan"></div>
+        <div id="error" class="error"></div>
+      </div>
+
+      <!-- VIEWER -->
+      <div id="viewerContainer" class="viewer hidden">
+        <button id="downloadBtn" class="download-btn">Download PDF</button>
+        <div id="pdfViewer"></div>
+      </div>
+
+    </div>
+
+  </main>
+
 </div>
-    
-  <button type="submit">Tampilkan Slip Gaji</button>
-</form>
 
-  <div id="pesan"></div>
-  <div id="error" class="error"></div>
-
-  
-  <div id="viewerContainer" style="display:none;">
-  <button id="downloadBtn" class="download-btn" style="display:block;">Download PDF</button>
-  <div id="pdfViewer"></div>
-</div>
-  
-<p class="footer-text">Dibuat oleh Keuangan RRI Tahuna</p>
-
-</div>
-
-<script src="script.js" defer></script>
+<script src="script.js"></script>
 
 </body>
 </html>
