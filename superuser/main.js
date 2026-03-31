@@ -99,7 +99,7 @@ el("generateJSONBtn").onclick = async ()=>{
         jsonData = result;
         el("jsonOutput").value = JSON.stringify(result,null,2);
 
-
+    };
     reader.readAsArrayBuffer(file);
 };
 
