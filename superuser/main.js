@@ -1,350 +1,44 @@
-import { login, checkSession, resetIdleTimer, logout, hashPass } from './login.js';
-
-let files = [];
-let jsonData = {};
-
-const el = id => document.getElementById(id);
-
 // ======================
-// INIT (AMAN)
+// INIT TAMBAHAN DASHBOARD (AMAN)
 // ======================
 window.addEventListener("DOMContentLoaded", () => {
-    checkSession();
 
-    // LOGIN
-    el("loginBtn").onclick = login;
+    const btnLoad = el("btnLoadFile");
+    const btnDelete = el("btnDeleteFile");
+    const checkAll = el("checkAll");
 
-    // LOGOUT
-    el("menuLogout").onclick = () => {
-        resetApp();
-        logout();
-    };
+    if(btnLoad) btnLoad.onclick = loadPDFList;
+    if(btnDelete) btnDelete.onclick = deleteSelectedFiles;
 
+    if(checkAll){
+        checkAll.onchange = function(){
+            document.querySelectorAll(".file-check")
+                .forEach(c => c.checked = this.checked);
+        };
+    }
 
-    // NAVIGATION
-    el("menuDashboard").onclick = ()=>showPage("dashboard");
-    el("menuJSON").onclick = ()=>showPage("json");
-    el("menuUpload").onclick = ()=>showPage("upload");
-    el("btnLoadFile").onclick = loadPDFList;
-    el("btnDeleteFile").onclick = deleteSelectedFiles;
-    el("checkAll").onchange = function(){
-    document.querySelectorAll(".file-check")
-        .forEach(c => c.checked = this.checked);
-};
-
-     // ✅ FIX PENTING
-    const btn = el("btnLoadFile");
-    if(btn){
-        btn.addEventListener("click", loadPDFList);
-    } else {
-        console.error("❌ tombol btnLoadFile tidak ditemukan");
-};
-
-    // MENU ACTIVE
-    const menus = document.querySelectorAll('.menu');
-    menus.forEach(menu => {
-        menu.addEventListener('click', () => {
-            menus.forEach(m => m.classList.remove('active'));
-            menu.classList.add('active');
-        });
-    });
-
-    // EXCEL
-    el("excelDrop").onclick = ()=>el("excelFile").click();
-    el("excelFile").onchange = showExcel;
-
-    // PDF
-    el("pdfDrop").onclick = ()=>el("pdfFiles").click();
-    el("pdfFiles").onchange = e=>{
-        files = Array.from(e.target.files);
-        renderFiles();
-    };
-
-    // BUTTONS
-    el("generateJSONBtn").onclick = generateJSON;
-    el("uploadJSONBtn").onclick = uploadJSON;
-    el("uploadPDFBtn").onclick = uploadPDF;
 });
 
 // ======================
-// GLOBAL EVENT
+// DASHBOARD
 // ======================
-document.addEventListener("click", resetIdleTimer);
-document.addEventListener("keydown", resetIdleTimer);
-
-// ======================
-// NAVIGATION
-// ======================
-const pages = ["dashboard","json","upload"];
-
-function showPage(page){
-    pages.forEach(p => el(p+"Page").classList.add("hidden"));
-    el(page+"Page").classList.remove("hidden");
-
-    if(page !== "json"){
-        el("jsonOutput").value = "";
-        el("jsonFileList").innerHTML = "";
-    }
-}
-
-// ======================
-// EXCEL
-// ======================
-function showExcel(){
-    const f = el("excelFile").files[0];
-    if(!f) return;
-
-    el("jsonFileList").innerHTML = `
-        <div class="file-item">
-            ${f.name}
-            <span onclick="removeExcel()">✖</span>
-        </div>
-    `;
-}
-
-window.removeExcel = ()=>{
-    el("excelFile").value = "";
-    el("jsonFileList").innerHTML = "";
-    el("jsonOutput").value = "";
-    jsonData = {};
-};
-
-// ======================
-// GENERATE JSON
-// ======================
-async function generateJSON(){
-    const file = el("excelFile").files[0];
-    if(!file) return alert("Pilih file!");
-
-    const reader = new FileReader();
-
-    reader.onload = async e=>{
-        const wb = XLSX.read(new Uint8Array(e.target.result), {type:"array"});
-        const sheet = wb.Sheets[wb.SheetNames[0]];
-        const rows = XLSX.utils.sheet_to_json(sheet,{defval:""});
-
-        const result = {};
-
-        for(let row of rows){
-            const normalized = {};
-            for(let key in row){
-                normalized[key.toLowerCase().replace(/\s/g,"")] = row[key];
-            }
-
-            const email = (normalized.email||"").toLowerCase().trim();
-            const nama = (normalized.namafile||"").toUpperCase().trim();
-            const pass = (normalized.password||"").toString().trim();
-
-            if(!email || !nama || !pass) continue;
-
-            result[email] = {
-                namaFile: nama,
-                password: await hashPass(pass)
-            };
-        }
-
-        jsonData = result;
-        el("jsonOutput").value = JSON.stringify(result,null,2);
-    };
-
-    reader.readAsArrayBuffer(file);
-}
-
-// ======================
-// UPLOAD JSON
-// ======================
-async function uploadJSON(){
-    const token = el("tokenJson").value.trim();
-    if (!token) return alert("Token kosong!");
-
-    const statusBox = el("uploadStatus");
-    const statusText = el("statusText");
-    const spinner = el("spinner");
-
-    statusBox.style.display = "flex";
-    statusText.innerText = "Uploading...";
-
-    const url = `https://api.github.com/repos/valios-idn/slip-gaji/contents/dataPegawai.json`;
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(jsonData, null, 2))));
-
-    let sha = null;
-
-    try {
-        const get = await fetch(url, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        if (get.ok) {
-            const data = await get.json();
-            sha = data.sha;
-        }
-    } catch (e) {}
-
-    const uploadWithRetry = async (retry = 3) => {
-        try {
-            const res = await fetch(url, {
-                method: "PUT",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    message: "update dataPegawai",
-                    content,
-                    sha
-                })
-            });
-
-            const result = await res.json();
-            if (!res.ok) throw result;
-
-            spinner.style.display = "none";
-            statusText.innerText = "✅ Selesai upload";
-
-        } catch (err) {
-            if (retry > 0) {
-                statusText.innerText = `Retrying... (${retry})`;
-                await new Promise(r => setTimeout(r, 2000));
-                return uploadWithRetry(retry - 1);
-            } else {
-                spinner.style.display = "none";
-                statusText.innerText = "❌ Gagal upload";
-            }
-        }
-    };
-
-    await uploadWithRetry();
-}
-
-// ======================
-// PDF VIEW
-// ======================
-function renderFiles(){
-    const container = el("fileList");
-    container.innerHTML = "";
-
-    files.forEach((f,i)=>{
-        container.innerHTML += `
-        <div class="file-card">
-            <div style="display:flex; justify-content:space-between;">
-                <div>${f.name}</div>
-                <div>
-                    <span class="retry-btn hidden" id="retry${i}" onclick="retryUpload(${i})">🔄</span>
-                    <span onclick="removeFile(${i})">✖</span>
-                </div>
-            </div>
-            <div class="progress"><div id="bar${i}" class="bar"></div></div>
-            <div id="status${i}">Menunggu...</div>
-        </div>`;
-    });
-}
-
-window.removeFile = (i)=>{
-    files.splice(i,1);
-    renderFiles();
-};
-
-// ======================
-// UPLOAD PDF
-// ======================
-async function uploadPDF(){
-    const token = el("tokenUpload").value.trim();
-    if(!token) return alert("Token kosong!");
-
-    const tahun = el("tahun").value;
-    const bulan = el("bulan").value;
-
-    for(let i=0;i<files.length;i++){
-        await uploadSingle(files[i], i, token, tahun, bulan);
-    }
-}
-
-async function uploadSingle(file,i,token,tahun,bulan){
-    const bar = el("bar"+i);
-    const status = el("status"+i);
-    const retryBtn = el("retry"+i);
-
-    try{
-        retryBtn.classList.add("hidden");
-
-        status.innerText = "Uploading...";
-        bar.style.width = "50%";
-
-        const path = `files/${tahun}/${bulan}/${file.name.toUpperCase()}`;
-        const url = `https://api.github.com/repos/valios-idn/slip-gaji/contents/${path}`;
-
-        const base64 = await toBase64(file);
-
-        const res = await fetch(url,{
-            method:"PUT",
-            headers:{
-                Authorization:`Bearer ${token}`,
-                "Content-Type":"application/json"
-            },
-            body: JSON.stringify({
-                message:"upload slip",
-                content:base64
-            })
-        });
-
-        if(!res.ok) throw new Error();
-
-        bar.style.width = "100%";
-        status.innerText = "✅ Selesai";
-
-    }catch{
-        status.innerText = "❌ Gagal";
-        retryBtn.classList.remove("hidden");
-    }
-}
-
-window.retryUpload = (i)=>{
-    const token = el("tokenUpload").value.trim();
-    uploadSingle(files[i], i, token, el("tahun").value, el("bulan").value);
-};
-
-// ======================
-// BASE64
-// ======================
-function toBase64(file){
-    return new Promise(r=>{
-        const fr = new FileReader();
-        fr.onload = ()=>r(fr.result.split(',')[1]);
-        fr.readAsDataURL(file);
-    });
-}
-
-// ======================
-// RESET (FIX UTAMA)
-// ======================
-function resetApp(){
-    jsonData = {};
-    files = [];
-
-    el("jsonOutput").value = "";
-    el("jsonFileList").innerHTML = "";
-    el("excelFile").value = "";
-
-    el("fileList").innerHTML = "";
-}
-
-// ======================
-// DASHBOARD (MATCH UPLOAD STYLE)
-// ======================
-
-el("bulkActions").classList.add("hidden");
 async function loadPDFList(){
-    const token = el("dashToken").value.trim();
-    if(!token) return alert("Token kosong!");
 
-    const tahun = el("dashTahun").value;
-    const bulan = el("dashBulan").value;
-
-    if(!tahun || !bulan){
-        return alert("Pilih tahun & bulan!");
-    }
+    const token = el("dashToken")?.value.trim();
+    const tahun = el("dashTahun")?.value;
+    const bulan = el("dashBulan")?.value;
 
     const container = el("dashboardList");
     const counter = el("fileCount");
+    const bulk = el("bulkActions");
+    const checkAll = el("checkAll");
+
+    if(!token) return alert("Token kosong!");
+    if(!tahun || !bulan) return alert("Pilih tahun & bulan!");
+
+    // reset UI
+    if(bulk) bulk.classList.add("hidden");
+    if(checkAll) checkAll.checked = false;
 
     container.innerHTML = "Loading...";
     counter.innerHTML = "";
@@ -365,8 +59,13 @@ async function loadPDFList(){
             .filter(f => f.name.toLowerCase().endsWith(".pdf"))
             .sort((a,b)=>a.name.localeCompare(b.name));
 
-        // ✅ COUNT
-        counter.innerHTML = `Total File: ${pdfFiles.length}`;
+        // tampilkan bulk action
+        if(pdfFiles.length > 0 && bulk){
+            bulk.classList.remove("hidden");
+        }
+
+        // count
+        counter.innerText = `Total File: ${pdfFiles.length}`;
 
         if(pdfFiles.length === 0){
             container.innerHTML = `<div class="empty">Tidak ada file</div>`;
@@ -374,34 +73,32 @@ async function loadPDFList(){
         }
 
         container.innerHTML = pdfFiles.map(f=>`
-    <div class="file-row">
-        <input type="checkbox" class="file-check" 
-            data-name="${f.name}" 
-            data-path="${f.path}" 
-            data-sha="${f.sha}">
+            <div class="file-row">
+                <input type="checkbox" class="file-check" 
+                    data-path="${f.path}" 
+                    data-sha="${f.sha}">
 
-        <a href="${f.download_url}" target="_blank" class="file-name">
-            📄 ${f.name}
-        </a>
+                <div class="file-name">📄 ${f.name}</div>
 
-        <div class="file-action">
-            <a href="${f.download_url}" target="_blank" class="open-btn">Buka</a>
-        </div>
-    </div>
-`).join("");
+                <div class="file-action">
+                    <a href="${f.download_url}" target="_blank" class="open-btn">Buka</a>
+                </div>
+            </div>
+        `).join("");
 
-    }catch{
+    }catch(err){
+        console.error(err);
         container.innerHTML = "❌ Gagal load file";
     }
 }
 
-// MULTI DELETE
+// ======================
+// DELETE MULTI FILE
+// ======================
 async function deleteSelectedFiles(){
-    const token = el("dashToken").value.trim();
-    if(!token) return alert("Token kosong!");
 
-    const tahun = el("dashTahun").value;
-    const bulan = el("dashBulan").value;
+    const token = el("dashToken")?.value.trim();
+    if(!token) return alert("Token kosong!");
 
     const checks = document.querySelectorAll(".file-check:checked");
 
@@ -412,6 +109,7 @@ async function deleteSelectedFiles(){
     if(!confirm(`Hapus ${checks.length} file?`)) return;
 
     for(let chk of checks){
+
         const path = chk.dataset.path;
         const sha = chk.dataset.sha;
 
@@ -429,33 +127,62 @@ async function deleteSelectedFiles(){
                     sha: sha
                 })
             });
-
         }catch{
             console.log("gagal hapus:", path);
         }
     }
 
-    alert("Selesai hapus");
-    loadPDFList(); // refresh
+    showNotif("✅ File berhasil dihapus");
+
+    setTimeout(()=>{
+        loadPDFList();
+    },1000);
 }
 
-el("checkAll").onchange = function(){
-  document.querySelectorAll(".file-check")
-    .forEach(c => c.checked = this.checked);
-};
-
+// ======================
+// CHECKBOX SYNC
+// ======================
 document.addEventListener("change", function(e){
+
+    // sync individual → checkAll
     if(e.target.classList.contains("file-check")){
         const all = document.querySelectorAll(".file-check");
         const checked = document.querySelectorAll(".file-check:checked");
 
-        el("checkAll").checked = all.length === checked.length;
+        const checkAll = el("checkAll");
+        if(checkAll){
+            checkAll.checked = all.length === checked.length;
+        }
     }
-});
 
-document.addEventListener("change", ()=>{
+    // update counter
     const total = document.querySelectorAll(".file-check").length;
     const checked = document.querySelectorAll(".file-check:checked").length;
 
-    el("fileCount").innerText = `Total: ${total} | Dipilih: ${checked}`;
+    const counter = el("fileCount");
+    if(counter){
+        counter.innerText = `Total: ${total} | Dipilih: ${checked}`;
+    }
+
 });
+
+// ======================
+// NOTIF (ANTI HILANG SENDIRI)
+// ======================
+function showNotif(msg){
+    let box = el("notifBox");
+
+    if(!box){
+        box = document.createElement("div");
+        box.id = "notifBox";
+        box.className = "notif";
+        document.body.appendChild(box);
+    }
+
+    box.innerText = msg;
+    box.style.display = "block";
+
+    setTimeout(()=>{
+        box.style.display = "none";
+    },2000);
+}
