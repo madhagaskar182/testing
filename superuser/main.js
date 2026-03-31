@@ -364,14 +364,26 @@ async function loadPDFList(){
         // 🔥 SIMPAN GLOBAL
         window.dashboardFiles = pdfFiles;
 
-        container.innerHTML = pdfFiles.map((f,i)=>`
-            <div class="file-item">
-                <label>
-                    <input type="checkbox" class="file-check" data-index="${i}">
-                    ${f.name}
-                </label>
-            </div>
-        `).join("");
+       container.innerHTML = pdfFiles.map((f,i)=>`
+  <div class="dashboard-item">
+
+    <div class="dashboard-left">
+      <input type="checkbox" class="file-check" data-index="${i}">
+      <span>📄</span>
+      <div class="dashboard-name">${f.name}</div>
+    </div>
+
+    <div class="dashboard-actions-btn">
+      <button class="btn-open" onclick="window.open('${f.download_url}')">
+        Buka
+      </button>
+      <button class="btn-delete" onclick="deleteSingle(${i})">
+        Hapus
+      </button>
+    </div>
+
+  </div>
+`).join("");
 
         // 🔥 TOTAL
         el("totalFile").innerText = `Total: ${pdfFiles.length}`;
