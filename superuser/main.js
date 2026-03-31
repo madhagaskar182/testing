@@ -343,5 +343,5 @@ function resetApp(){
     el("fileList").innerHTML = "";
 }
 
+// optional (kalau mau global)
 window.resetApp = resetApp;
-}
