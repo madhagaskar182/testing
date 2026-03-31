@@ -238,11 +238,11 @@ this.classList.replace("fa-eye-slash", "fa-eye");
 
 // ===== LOADING =====
 function showLoading() {
-  document.getElementById("loadingOverlay").classList.remove("hidden");
+  document.getElementById("loadingOverlay").classList.add("show");
 }
 
 function hideLoading() {
-  document.getElementById("loadingOverlay").classList.add("hidden");
+  document.getElementById("loadingOverlay").classList.remove("show");
 }
 
 // ===== NOTIF =====
