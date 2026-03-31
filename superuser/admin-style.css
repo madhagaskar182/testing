@@ -410,3 +410,31 @@ button:hover {
   color: #64748b;
   font-size: 13px;
 }
+
+#fileCount {
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.file-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #0f172a;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.file-row a {
+  flex: 1;
+  text-decoration: none;
+  color: #cbd5f5;
+}
+
+.file-row:hover {
+  background: #1e293b;
+}
+
+.file-row input {
+  transform: scale(1.2);
+}
