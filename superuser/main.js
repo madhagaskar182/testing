@@ -385,6 +385,109 @@ async function loadPDFList(){
   </div>
 `).join("");
 
+        //DELETE SINGLE
+
+    window.deleteSingle = async (i) => {
+    const token = el("dashToken").value.trim();
+    if(!token) return alert("Token kosong!");
+
+    const file = window.dashboardFiles[i];
+
+    if(!file){
+        alert("File tidak ditemukan");
+        return;
+    }
+
+    if(!confirm(`Hapus ${file.name}?`)) return;
+
+    const url = `https://api.github.com/repos/valios-idn/slip-gaji/contents/${file.path}`;
+
+    try{
+        const res = await fetch(url,{
+            method:"DELETE",
+            headers:{
+                Authorization:`Bearer ${token}`,
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify({
+                message:`delete ${file.name}`,
+                sha: file.sha
+            })
+        });
+
+        const result = await res.json();
+
+        if(!res.ok){
+            console.error(result);
+            throw new Error(result.message);
+        }
+
+        alert("✅ File berhasil dihapus");
+        loadPDFList();
+
+    }catch(err){
+        console.error(err);
+        alert("❌ Gagal hapus: " + err.message);
+    }
+};
+
+        //DELETE MULTI
+
+        el("btnDeleteSelected").onclick = async () => {
+    const token = el("dashToken").value.trim();
+    if(!token) return alert("Token kosong!");
+
+    const checked = document.querySelectorAll(".file-check:checked");
+
+    if(checked.length === 0){
+        alert("Tidak ada file dipilih");
+        return;
+    }
+
+    if(!confirm(`Hapus ${checked.length} file?`)) return;
+
+    let success = 0;
+    let failed = 0;
+
+    for(const cb of checked){
+        const index = cb.dataset.index;
+        const file = window.dashboardFiles[index];
+
+        try{
+            const res = await fetch(
+                `https://api.github.com/repos/valios-idn/slip-gaji/contents/${file.path}`,
+                {
+                    method:"DELETE",
+                    headers:{
+                        Authorization:`Bearer ${token}`,
+                        "Content-Type":"application/json"
+                    },
+                    body: JSON.stringify({
+                        message:`delete ${file.name}`,
+                        sha: file.sha
+                    })
+                }
+            );
+
+            if(res.ok){
+                success++;
+            }else{
+                const err = await res.json();
+                console.error(err);
+                failed++;
+            }
+
+        }catch(e){
+            console.error(e);
+            failed++;
+        }
+    }
+
+    alert(`Selesai\n✅ Berhasil: ${success}\n❌ Gagal: ${failed}`);
+
+    loadPDFList();
+};
+
         // 🔥 TOTAL
         el("totalFile").innerText = `Total: ${pdfFiles.length}`;
 
