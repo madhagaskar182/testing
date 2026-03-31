@@ -326,27 +326,13 @@ function resetApp(){
 // ======================
 
 async function loadPDFList(){
-    console.log("🔥 tombol diklik");
-
-    const token = el("dashToken")?.value.trim();
-    const tahun = el("dashTahun")?.value;
-    const bulan = el("dashBulan")?.value;
+    const token = el("dashToken").value.trim();
+    const tahun = el("dashTahun").value;
+    const bulan = el("dashBulan").value;
     const container = el("dashboardList");
 
-    if(!container){
-        console.error("❌ dashboardList tidak ditemukan");
-        return;
-    }
-
-    if(!token){
-        alert("Token kosong!");
-        return;
-    }
-
-    if(!tahun || !bulan){
-        alert("Pilih tahun & bulan!");
-        return;
-    }
+    if(!token) return alert("Token kosong!");
+    if(!tahun || !bulan) return alert("Pilih tahun & bulan!");
 
     container.innerHTML = "Loading...";
 
@@ -354,41 +340,38 @@ async function loadPDFList(){
         const path = `files/${tahun}/${bulan}`;
         const url = `https://api.github.com/repos/valios-idn/slip-gaji/contents/${path}`;
 
-        console.log("📡 Fetch:", url);
-
         const res = await fetch(url,{
-            headers:{
-                Authorization:`Bearer ${token}`
-            }
+            headers:{ Authorization:`Bearer ${token}` }
         });
 
-        console.log("STATUS:", res.status);
-
-        if(!res.ok){
-            const text = await res.text();
-            console.error("❌ ERROR:", text);
-            throw new Error();
-        }
+        if(!res.ok) throw new Error();
 
         const data = await res.json();
 
-        const pdfFiles = data
-            .filter(f => f.name.toLowerCase().endsWith(".pdf"))
-            .sort((a,b)=>a.name.localeCompare(b.name));
+        const pdfFiles = data.filter(f => f.name.toLowerCase().endsWith(".pdf"));
 
         if(pdfFiles.length === 0){
             container.innerHTML = `<div class="empty">Tidak ada file</div>`;
+            el("totalFile").innerText = "Total: 0";
             return;
         }
 
-        container.innerHTML = pdfFiles.map(f=>`
-            <a href="${f.download_url}" target="_blank" class="file">
-                📄 ${f.name}
-            </a>
+        // 🔥 SIMPAN GLOBAL
+        window.dashboardFiles = pdfFiles;
+
+        container.innerHTML = pdfFiles.map((f,i)=>`
+            <div class="file-item">
+                <label>
+                    <input type="checkbox" class="file-check" data-index="${i}">
+                    ${f.name}
+                </label>
+            </div>
         `).join("");
 
-    }catch(err){
-        console.error(err);
-        container.innerHTML = "❌ Gagal load file (cek console)";
+        // 🔥 TOTAL
+        el("totalFile").innerText = `Total: ${pdfFiles.length}`;
+
+    }catch{
+        container.innerHTML = "❌ Gagal load file";
     }
 }
