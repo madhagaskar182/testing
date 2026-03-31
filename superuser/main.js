@@ -79,10 +79,29 @@ function showPage(page){
     pages.forEach(p => el(p+"Page").classList.add("hidden"));
     el(page+"Page").classList.remove("hidden");
 
-    if(page !== "json"){
-        el("jsonOutput").value = "";
-        el("jsonFileList").innerHTML = "";
-    }
+    // ======================
+    // 🔥 RESET SEMUA HALAMAN
+    // ======================
+
+    // JSON
+    el("jsonOutput").value = "";
+    el("jsonFileList").innerHTML = "";
+    el("excelFile").value = "";
+
+    // UPLOAD PDF
+    files = [];
+    el("fileList").innerHTML = "";
+    el("pdfFiles").value = "";
+
+    // DASHBOARD
+    el("dashboardList").innerHTML = "";
+    if(el("bulkActions")) el("bulkActions").classList.add("hidden");
+    if(el("totalFile")) el("totalFile").innerText = "Total: 0";
+    if(el("deleteStatus")) el("deleteStatus").innerText = "";
+
+    // reset checkbox select all
+    const selectAll = el("selectAll");
+    if(selectAll) selectAll.checked = false;
 }
 
 // ======================
