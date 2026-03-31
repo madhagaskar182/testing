@@ -32,7 +32,6 @@ window.addEventListener("DOMContentLoaded", () => {
         btn.addEventListener("click", loadPDFList);
     } else {
         console.error("❌ tombol btnLoadFile tidak ditemukan");
-    }
 });
 
     // MENU ACTIVE
