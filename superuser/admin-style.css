@@ -467,3 +467,63 @@ button:hover {
 .btn-delete:hover {
   background: #fecaca;
 }
+
+/* ======================
+   BULK ACTION RAPI
+====================== */
+
+.bulk {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+  margin-top: 12px;
+  padding: 10px 12px;
+
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+/* LEFT (checkbox + label) */
+.bulk label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #0f172a;
+  cursor: pointer;
+}
+
+/* CHECKBOX */
+.bulk input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+/* RIGHT AREA (kalau ada tombol nanti) */
+.bulk-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* BUTTON DELETE */
+.bulk button {
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+/* TOTAL TEXT */
+.bulk-total {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* HOVER HALUS */
+.bulk:hover {
+  background: #f1f5f9;
+}
