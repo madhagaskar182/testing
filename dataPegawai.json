@@ -1,8 +1,4 @@
 {
-  "viktorviktorianus@gmail.com": {
-    "namaFile": "VIKTORIANUS, S.Si",
-    "password": "6e5632442078e532200c7360f1a58fcb6d62b49ca3fa8a83bfdb32ae4b798312"
-  },
   "misselsahambe@gmail.com": {
     "namaFile": "MISSEL SAHAMBE",
     "password": "6856aea8ff41e077011923c59aa1d88c87f32ef1563bdfb7a867cd25a005f9e7"
@@ -194,5 +190,5 @@
   "viktorviktorianus@gmail.com": {
     "namaFile": "VIKTORIANUS, S.Si",
     "password": "6e5632442078e532200c7360f1a58fcb6d62b49ca3fa8a83bfdb32ae4b798312"
-  }
+  },
 }
